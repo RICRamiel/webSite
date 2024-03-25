@@ -9,6 +9,7 @@ const clearButton = document.getElementById("clearButton");
 const sendButton = document.getElementById("sendData");
 const mapSize = document.getElementById("mapSize");
 const drawingContext = canvas.getContext("2d");
+const clusterize = document.getElementById("clusterize")
 
 //read map size in px
 let size;
@@ -16,7 +17,7 @@ mapSize.addEventListener("input", (event) => {
     size = event.target.value;
 });
 
-const CELL_SIDE_COUNT = 50;
+const CELL_SIDE_COUNT = 10;
 const cellPixelLength = canvas.width / CELL_SIDE_COUNT;
 const colorHistory = {};
 
@@ -85,17 +86,44 @@ function fillCell(cellX, cellY) {
     colorHistory[`${cellX}_${cellY}`] = colorInput.value;
 }
 
+function reColorCell(cellX, cellY, color) {
+    const startX = cellX * cellPixelLength;
+    const startY = cellY * cellPixelLength;
+
+    drawingContext.fillStyle = color;
+    drawingContext.fillRect(startX, startY, cellPixelLength, cellPixelLength);
+    colorHistory[`${cellX}_${cellY}`] = colorInput.value;
+}
+
 function requestData() {
     let keys = Object.keys(colorHistory);
     let data = [];
     for (let i = 0; i < keys.length; i++) {
-        data.push([keys[i].split("_").map(Number)]);
+        data.push(keys[i].split("_").map(Number));
     }
     console.log(data);
     return data;
+}
+
+
+function colorizeOnCluster() {
+    let classes = KMeans(requestData(), 2);
+    console.log(classes);
+    let data = requestData();
+    let colors = ["#ff0000", "#00ff00"];
+    for (let i = 0; i < classes.length; i++) {
+        reColorCell(data[i][0], data[i][1], colors[classes[i]]);
+        console.log("pix colored")
+    }
+}
+
+function cluster() {
+    colorizeOnCluster()
+    console.log("cluster done");
 }
 
 sendButton.addEventListener("click", requestData)
 canvas.addEventListener("mousedown", handleCanvasMousedown);
 clearButton.addEventListener("click", handleClearButtonClick);
 toggleGuide.addEventListener("change", handleToggleGuideChange);
+clusterize.addEventListener("click", cluster)

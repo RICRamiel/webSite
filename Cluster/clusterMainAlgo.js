@@ -22,7 +22,7 @@ function KMeans(data, k = 1) {
     // Matrix of distance from each data point to each cluster centroid.
     const distances = zeros([data.length, k]);
 
-    // Vector data points' classes. The value of -1 means that no class has bee assigned yet.
+    // Vector data points' classes. The value of -1 means that no class has been assigned yet.
     const classes = Array(data.length).fill(-1);
 
     let iterate = true;
