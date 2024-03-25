@@ -6,14 +6,22 @@ const guide = document.getElementById("guide");
 const colorInput = document.getElementById("colorInput");
 const toggleGuide = document.getElementById("toggleGuide");
 const clearButton = document.getElementById("clearButton");
+const sendButton = document.getElementById("sendData");
+const mapSize = document.getElementById("mapSize");
 const drawingContext = canvas.getContext("2d");
 
-const CELL_SIDE_COUNT = 5;
+//read map size in px
+let size;
+mapSize.addEventListener("input", (event) => {
+    size = event.target.value;
+});
+
+const CELL_SIDE_COUNT = 50;
 const cellPixelLength = canvas.width / CELL_SIDE_COUNT;
 const colorHistory = {};
 
 // Set default color
-colorInput.value = "#009578";
+colorInput.value = "#000000";
 
 // Initialize the canvas background
 drawingContext.fillStyle = "#ffffff";
@@ -31,24 +39,25 @@ drawingContext.fillRect(0, 0, canvas.width, canvas.height);
     );
 }
 
-function handleCanvasMousedown(e) {
+function handleCanvasMousedown(event) {
     // Ensure user is using their primary mouse button
-    if (e.button !== 0) {
+    if (event.button !== 0) {
         return;
     }
 
     const canvasBoundingRect = canvas.getBoundingClientRect();
-    const x = e.clientX - canvasBoundingRect.left;
-    const y = e.clientY - canvasBoundingRect.top;
+    const x = event.clientX - canvasBoundingRect.left;
+    const y = event.clientY - canvasBoundingRect.top;
     const cellX = Math.floor(x / cellPixelLength);
     const cellY = Math.floor(y / cellPixelLength);
     const currentColor = colorHistory[`${cellX}_${cellY}`];
 
-    if (e.ctrlKey) {
+    if (event.ctrlKey) {
         if (currentColor) {
             colorInput.value = currentColor;
         }
     } else {
+        //console.log(cellX,cellY);
         fillCell(cellX, cellY);
     }
 }
@@ -64,6 +73,7 @@ function handleClearButtonClick() {
 
 function handleToggleGuideChange() {
     guide.style.display = toggleGuide.checked ? null : "none";
+
 }
 
 function fillCell(cellX, cellY) {
@@ -75,6 +85,17 @@ function fillCell(cellX, cellY) {
     colorHistory[`${cellX}_${cellY}`] = colorInput.value;
 }
 
+function requestData() {
+    let keys = Object.keys(colorHistory);
+    let data = [];
+    for (let i = 0; i < keys.length; i++) {
+        data.push([keys[i].split("_").map(Number)]);
+    }
+    console.log(data);
+    return data;
+}
+
+sendButton.addEventListener("click", requestData)
 canvas.addEventListener("mousedown", handleCanvasMousedown);
 clearButton.addEventListener("click", handleClearButtonClick);
 toggleGuide.addEventListener("change", handleToggleGuideChange);
