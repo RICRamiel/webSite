@@ -1,9 +1,10 @@
 body{
-    /*background-color: #F2E9E4;*/
-    background-color: black;
+    background-color: #F2E9E4;
 }
 
-#canvas{
+canvas{}
+
+#canv{
     display: block;
     width: 500px;
     height:500px;
