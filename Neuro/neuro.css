@@ -2,11 +2,22 @@ body{
     background-color: #F2E9E4;
 }
 
-canvas{}
-
+#container {
+    position:relative;
+    width: 700px;
+}
 #canv{
-    display: block;
+    /*display: block;*/
     width: 500px;
     height:500px;
     border: 1px solid #22223B;
+}
+#result {
+    font-size: 128pt; /* Размер шрифта в пунктах */
+    float: right;
+    width: 120px;
+    height: 280px;
+    border: 5px solid #fff;
+    text-align: center;
+    line-height: 280px;
 }

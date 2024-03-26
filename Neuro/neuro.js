@@ -81,10 +81,6 @@ function DCanvas(el) {
                 this.drawCell(__draw[__d][0], __draw[__d][1], __draw[__d][2], __draw[__d][3])
             }
         }
-        // const weights = [];
-        // for (i = 0; i < 500; i++) {
-        //     weights.push();
-        // }
         return vector;
     }
 
