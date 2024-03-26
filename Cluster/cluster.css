@@ -1,18 +1,35 @@
-
-A:link{
-    text-decoration: none;/* Убирает подчеркивание для ссылок */
+A:link {
+    text-decoration: none; /* Убирает подчеркивание для ссылок */
 }
 
-header{
+#canvas {
+    cursor: pointer;
+
+}
+
+#guide {
+    display: grid;
+    pointer-events: none;
+    position: absolute;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+#guide div {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+header {
     display: flex;
-    margin-top: 0;
+    margin-top: -8px;
     align-content: center;
     justify-content: space-evenly;
     height: 100px;
-    background:rgb(74, 78, 105);
-    border:solid rgb(34, 34, 59);
+    width: 100%;
+    background: rgb(74, 78, 105);
+    border: solid rgb(34, 34, 59);
 }
-.header_feel{
+
+.header_feel {
     position: absolute;
     align-content: center;
     justify-content: center;
@@ -20,7 +37,8 @@ header{
     border-right: rgb(201, 173, 167);
     border-left: rgb(201, 173, 167);
 }
-a{
+
+a {
     cursor: pointer;
     text-decoration: none;
     margin: 10px;
@@ -34,10 +52,11 @@ a{
     background-color: rgb(74, 78, 105);
     outline-color: rgb(74, 78, 105);
     font-family: "Workbench", sans-serif;
-    font-size:75%;
+    font-size: 75%;
     color: rgb(201, 173, 167);
 }
-main{
+
+main {
     position: absolute;
     align-content: center;
     justify-content: center;
