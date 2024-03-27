@@ -6,6 +6,24 @@ body{
     position:relative;
     width: 700px;
 }
+button{
+    cursor: pointer;
+    text-decoration: none;
+    margin: 5px;
+    border-right: solid;
+    border-left: solid;
+    border-bottom: solid;
+    border-top: solid;
+    border-radius: 20%;
+    align-content: center;
+    padding: 1em;
+    background-color: rgb(201, 173, 167);
+    outline-color: rgb(201, 173, 167);
+    font-family: "Workbench", sans-serif;
+    font-size:75%;
+    color: rgb(74, 78, 105);
+}
+
 #canv{
     /*display: block;*/
     width: 500px;
