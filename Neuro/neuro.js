@@ -108,9 +108,11 @@ function DCanvas(el) {
         is_mouse_down = true;
         ctx.beginPath();
     })
+
     el.addEventListener("mouseup", function (e) {
         is_mouse_down = false;
     })
+
     el.addEventListener("mousemove", function (e) {
         if (is_mouse_down) {
             ctx.fillStyle = "#4A4E69";
