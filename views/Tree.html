@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Tree</title>
+        <link rel="stylesheet" type="text/css" href="../css/style.css">
+        <link rel="stylesheet" type="text/css" href="../Tree/Tree.css">
+
+    </head>
+
+    <body>
+        <header>
+            <a href="frontShit.html"><h1>Main</h1></a>
+            <a href="Astar.html"><h1>A*</h1></a>
+            <a href="cluster.html"><h1>Cluster</h1></a>
+            <a><h1>Gen</h1></a>
+            <a><h1>AntAlgo</h1></a>
+            <a href="Tree.html"><h1>Tree</h1></a>
+            <a href="Neuro.html"><h1>Neuro</h1></a>
+            <a href="https://docs.google.com/document/d/1rW01MhzNS2TsKEkBY4n4S7UAtf09o155a93gYLVs1xY/edit"><h1>ТЗ</h1></a>
+        </header>
+
+        <div id="container">
+            <div id="tree"></div>
+        </div>
+
+        <script type="text/javascript" src="../Tree/tree.js"></script>
+        <script>
+            var tree = {
+                zelda : {value : "Zelda Timeline", parent : ""},
+                a : {value : "Skyward Sword", parent : "zelda"},
+                b : {value : "The Minish Cap", parent : "a"},
+                c : {value : "Four Swords", parent : "b"},
+                d : {value : "Ocarina of Time", parent : "c"},
+                e : {value : "A link to Past", parent : "d"},
+                f : {value : "Oracle of Seasons & Oracle of Ages", parent : "e"},
+                g : {value : "Link's Awakening", parent : "f"},
+                h : {value : "The Legend of Zelda", parent : "g"},
+                i : {value : "Adventure of Link", parent : "h"},
+                j : {value : "Majora's Mask", parent : "d"},
+                k : {value : "Twilight Princess", parent : "j"},
+                l : {value : "Four Swords", parent : "k"},
+                m : {value : "The Wind Waker", parent : "d"},
+                n : {value : "Phanthom Hourglass", parent : "m"},
+                o : {value : "Spirit Tracks", parent : "n"}
+
+            };
+
+            TreeData(tree, "#tree");
+        </script>
+    </body>
+</html>
