@@ -3,8 +3,9 @@
     <head>
         <meta charset="UTF-8">
         <title>Tree</title>
-        <link rel="stylesheet" type="text/css" href="../css/style.css">
         <link rel="stylesheet" type="text/css" href="../Tree/Tree.css">
+        <link rel="stylesheet" type="text/css" href="../css/style.css">
+        <link rel="stylesheet" type="text/css" href="../Tree/mainTreeStyle.css">
 
     </head>
 
@@ -19,6 +20,59 @@
             <a href="Neuro.html"><h1>Neuro</h1></a>
             <a href="https://docs.google.com/document/d/1rW01MhzNS2TsKEkBY4n4S7UAtf09o155a93gYLVs1xY/edit"><h1>ТЗ</h1></a>
         </header>
+
+        <h2>Дерево решений.</h2>
+
+        <h4>Создайте дерево:</h4>
+        <div>
+            <form>
+                <input type="text" class="parent" placeholder="Узел">
+                <input type="text" class="if" placeholder="Условие">
+                <input type="text" class="child" placeholder="Исход">
+                <button>Добавить условие</button>
+            </form>
+        </div>
+        <div>
+            <form>
+                <select class="parent" name="nodes">
+                    <!--поиск по ранее записанным узлам-->
+                    <option>Node1</option>
+                    <option>Node2</option>
+                    <option>Node3</option>
+                </select>
+                <input type="text" class="if" placeholder="Условие">
+                <input type="text" class="child" placeholder="Исход">
+                <button>Добавить условие</button>
+            </form>
+        </div>
+
+        <button>Добавить узел</button>
+        <button>Пройти по дереву</button>
+
+        <br></br>
+
+        <label for="variants">
+            <span>Вопросссссс</span>
+        </label>
+        <select id="variants" name="nodes">
+            <!--поиск по ранее записанным узлам-->
+            <option>Node1</option>
+            <option>Node2</option>
+            <option>Node3</option>
+        </select>
+
+        <br></br>
+
+        <label for="children">
+            <span>Ответтт</span>
+        </label>
+        <select id="children" name="nodes">
+            <!--поиск по ранее записанным узлам-->
+            <option>Node1</option>
+            <option>Node2</option>
+            <option>Node3</option>
+        </select>
+
 
         <div id="container">
             <div id="tree"></div>
