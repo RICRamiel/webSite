@@ -1,0 +1,70 @@
+input::file-selector-button {
+    background-color: #f8a100;
+}
+
+input::file-selector-button {
+    background-image: linear-gradient(
+            to right,
+            #ff7a18,
+            #af002d,
+            #319197 100%,
+            #319197 200%
+    );
+    background-position-x: 0%;
+    background-size: 200%;
+    border: 0;
+    border-radius: 8px;
+    color: #fff;
+    padding: 1rem 1.25rem;
+    text-shadow: 0 1px 1px #333;
+    transition: all 0.25s;
+}
+input::file-selector-button:hover {
+    background-position-x: 100%;
+    /*transform: scale(1.1);*/
+}
+
+
+A:link{
+    text-decoration: none;/* Убирает подчеркивание для ссылок */
+}
+
+header{
+    display: flex;
+    margin-top: 0;
+    align-content: center;
+    justify-content: space-evenly;
+    height: 100px;
+    background:rgb(74, 78, 105);
+    border:solid rgb(34, 34, 59);
+}
+.header_feel{
+    position: absolute;
+    align-content: center;
+    justify-content: center;
+    display: flex;
+    border-right: rgb(201, 173, 167);
+    border-left: rgb(201, 173, 167);
+}
+a{
+    cursor: pointer;
+    text-decoration: none;
+    margin: 10px;
+    border-right: solid;
+    border-left: solid;
+    border-bottom: solid;
+    border-top: solid;
+    border-radius: 20%;
+    align-content: center;
+    padding: 1em;
+/*        background-color: rgb(74, 78, 105);*/
+    outline-color: rgb(74, 78, 105);
+    font-family: "Workbench", sans-serif;
+    font-size:75%;
+    color: rgb(201, 173, 167);
+}
+main{
+    position: absolute;
+    align-content: center;
+    justify-content: center;
+}
