@@ -1,18 +1,22 @@
-function calcDistance(x1, y1, x2, y2) {
-    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)).toFixed(2);
+function swapArr(a,i,j)
+{
+    var temp = a[i];
+    a[i] = a[j];
+    a[j] = temp;
 }
 
 
-function calcAllDist(path){
-    let sum = 0;
-    for(let node of path){
-        sum+=node[1];
+
+// Calculate distance
+function getDistance(a,pointOrder)
+{
+    var sum = 0;
+    for(var i=0; i < pointOrder.length-1; i++)
+    {
+        var ptA = a[pointOrder[i]];
+        var ptB = a[pointOrder[i+1]];
+        var d = dist(ptA.x,ptA.y,ptB.x,ptB.y);
+        sum+=d;
     }
     return sum;
-}
-
-
-
-function getRandomInt(min, max){
-    return Math.floor(Math.random() * (max - min + 1) + min);
 }
