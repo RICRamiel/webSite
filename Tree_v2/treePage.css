@@ -5,10 +5,10 @@ input::file-selector-button {
 input::file-selector-button {
     background-image: linear-gradient(
             to right,
-            #ff7a18,
-            #af002d,
-            #319197 100%,
-            #319197 200%
+            #4A4E69,
+            #22223B,
+            #C9ADA7 100%,
+            #C9ADA7 200%
     );
     background-position-x: 0%;
     background-size: 200%;

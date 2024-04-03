@@ -1,3 +1,42 @@
+let data = [];
+const maxTree = document.getElementById("maxTree");
+const maxTreeDemo = document.getElementById("maxTreeDemo");
+const gen = document.getElementById("gen");
+gen.addEventListener("click", doItStupidPC);
+let mtd = parseInt(maxTree.value);
+maxTreeDemo.innerHTML = mtd;
+
+maxTree.oninput = function () {
+    maxTreeDemo.innerHTML = this.value;
+    mtd = parseInt(maxTree.value);
+}
+document.getElementById("input").addEventListener("change", function () {
+    let reader = new FileReader();
+    reader.readAsText(document.getElementById("input").files[0]);
+
+    reader.onload = function () {
+        nowFile = reader.result;
+        data = makeTree(nowFile);
+        /*TreeData(TreeAndRoot, "#tree");*/
+    }
+})
+
+function makeTree(inputData) {
+    var newTree = [];
+    var allTextLines = inputData.split(/\r\n|\n/);
+    var names = allTextLines[0].split(',');
+    for (var i = 1; i < allTextLines.length; i++) {
+        var line = allTextLines[i].split(',');
+        var oneLine = {};
+        for (var j = 0; j < line.length; j++) {
+            var a = +line[j];
+            oneLine[names[j]] = (isNaN(a)) ? line[j] : a;
+        }
+        newTree.push(oneLine);
+    }
+    return newTree;
+}
+
 var dt = function () {
     function n(b) {
         var c = v, e = b.trainingSet, d = b.ignoredAttributes, a = {};
@@ -24,8 +63,7 @@ var dt = function () {
         this.trees = e
     }
 
-    function q(b,
-               c) {
+    function q(b, c) {
         for (var e = {}, d = b.length - 1; 0 <= d; d--) e[b[d][c]] = 0;
         for (d = b.length - 1; 0 <= d; d--) e[b[d][c]] += 1;
         return e
@@ -129,54 +167,49 @@ var dt = function () {
     return m
 }();
 
-// Training set
-var data =
-    [{person: 'Homer', hairLength: 0, weight: 250, age: 36, sex: 'male'},
-        {person: 'Marge', hairLength: 10, weight: 150, age: 34, sex: 'female'},
-        {person: 'Bart', hairLength: 2, weight: 90, age: 10, sex: 'male'},
-        {person: 'Lisa', hairLength: 6, weight: 78, age: 8, sex: 'female'},
-        {person: 'Maggie', hairLength: 4, weight: 20, age: 1, sex: 'female'},
-        {person: 'Abe', hairLength: 1, weight: 170, age: 70, sex: 'male'},
-        {person: 'Selma', hairLength: 8, weight: 160, age: 41, sex: 'female'},
-        {person: 'Otto', hairLength: 10, weight: 180, age: 38, sex: 'male'},
-        {person: 'Krusty', hairLength: 6, weight: 200, age: 45, sex: 'male'}];
 
-var config = {
-    // обучающая выборка
-    trainingSet: data,
+function doItStupidPC() {
+    if (data.length === 0) {
+        alert("You are the stupid man! You need to give me a file!");
+        return;
+    }
 
-    // название атрибута, который содержит название класса, к которому относится тот или иной элемент обучающей выборки
-    categoryAttr: 'sex',
+    var config = {
+        // обучающая выборка
+        trainingSet: data,
 
-    // масив атрибутов, которые должны игнорироваться при построении дерева
-    ignoredAttributes: ['person'],
+        // название атрибута, который содержит название класса, к которому относится тот или иной элемент обучающей выборки
+        categoryAttr: 'sex',
 
-    // при желании, можно установить ограничения:
+        // масив атрибутов, которые должны игнорироваться при построении дерева
+        ignoredAttributes: ['person'],
 
-    // максимальная высота дерева
-    maxTreeDepth: 10
+        // при желании, можно установить ограничения:
 
-    // порог энтропии, при достижении которого следует остановить построение дерева
-    // entropyThrehold: 0.05
+        // максимальная высота дерева
+        maxTreeDepth: mtd
 
-    // порог количества элементов обучающей выборки, при достижении которого следует остановить построение дерева
-    // minItemsCount: 3
-};
+        // порог энтропии, при достижении которого следует остановить построение дерева
+        // entropyThrehold: 0.05
+
+        // порог количества элементов обучающей выборки, при достижении которого следует остановить построение дерева
+        // minItemsCount: 3
+    };
 
 // построение дерева принятия решений:
-var decisionTree = new dt.DecisionTree(config);
+    var decisionTree = new dt.DecisionTree(config);
 
 // вот так можно пострить лес принятия решений:
-var numberOfTrees = 3;
-var randomForest = new dt.RandomForest(config, numberOfTrees);
+    var numberOfTrees = 3;
+    var randomForest = new dt.RandomForest(config, numberOfTrees);
 
-var comic = {person: 'Comic guy', hairLength: 8, weight: 290, age: 38};
+    var comic = {person: 'Comic guy', hairLength: 8, weight: 290, age: 38};
 
-var decisionTreePrediction = decisionTree.predict(comic);
+    var decisionTreePrediction = decisionTree.predict(comic);
 // результатом классификации с использованием дерева принятия решений
 // является название класса, к которому следует отнести классифицируемый объект
 
-var randomForestPrediction = randomForest.predict(comic);
+    var randomForestPrediction = randomForest.predict(comic);
 // результатом классификации с использованием леса деревьев принятия решений
 // есть объект, полями которого являются названия классов,
 // а значениями полей - является количество деревьев, которые "проголосовали" за то,
@@ -186,42 +219,45 @@ var randomForestPrediction = randomForest.predict(comic);
 // тем больше вероятность того, что объект относится к данному классу
 
 // Displaying predictions
-document.getElementById('testingItem').innerHTML = JSON.stringify(comic, null, 0);
-document.getElementById('decisionTreePrediction').innerHTML = JSON.stringify(decisionTreePrediction, null, 0);
-document.getElementById('randomForestPrediction').innerHTML = JSON.stringify(randomForestPrediction, null, 0);
+    document.getElementById('testingItem').innerHTML = JSON.stringify(comic, null, 0);
+    document.getElementById('decisionTreePrediction').innerHTML = JSON.stringify(decisionTreePrediction, null, 0);
+    document.getElementById('randomForestPrediction').innerHTML = JSON.stringify(randomForestPrediction, null, 0);
 
 // Displaying Decision Tree
-document.getElementById('displayTree').innerHTML = treeToHtml(decisionTree.root);
+    document.getElementById('displayTree').innerHTML = treeToHtml(decisionTree.root);
 
 
 // Recursive (DFS) function for displaying inner structure of decision tree
-function treeToHtml(tree) {
-    // only leafs containing category
-    if (tree.category) {
+    function treeToHtml(tree) {
+
+        // only leafs containing category
+        if (tree.category) {
+            return ['<ul>',
+                '<li>',
+                '<a href="#">',
+                '<b>', tree.category, '</b>',
+                '</a>',
+                '</li>',
+                '</ul>'].join('');
+        }
+
         return ['<ul>',
             '<li>',
             '<a href="#">',
-            '<b>', tree.category, '</b>',
+            '<b>', tree.attribute, ' ', tree.predicateName, ' ', tree.pivot, ' ?</b>',
             '</a>',
+            '<ul>',
+            '<li>',
+            '<a href="#">yes</a>',
+            treeToHtml(tree.match),
+            '</li>',
+            '<li>',
+            '<a href="#">no</a>',
+            treeToHtml(tree.notMatch),
+            '</li>',
+            '</ul>',
             '</li>',
             '</ul>'].join('');
     }
-
-    return ['<ul>',
-        '<li>',
-        '<a href="#">',
-        '<b>', tree.attribute, ' ', tree.predicateName, ' ', tree.pivot, ' ?</b>',
-        '</a>',
-        '<ul>',
-        '<li>',
-        '<a href="#">yes</a>',
-        treeToHtml(tree.match),
-        '</li>',
-        '<li>',
-        '<a href="#">no</a>',
-        treeToHtml(tree.notMatch),
-        '</li>',
-        '</ul>',
-        '</li>',
-        '</ul>'].join('');
 }
+
