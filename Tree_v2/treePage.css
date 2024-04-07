@@ -1,8 +1,4 @@
 input::file-selector-button {
-    background-color: #f8a100;
-}
-
-input::file-selector-button {
     background-image: linear-gradient(
             to right,
             #4A4E69,
@@ -21,7 +17,6 @@ input::file-selector-button {
 }
 input::file-selector-button:hover {
     background-position-x: 100%;
-    /*transform: scale(1.1);*/
 }
 
 
@@ -67,4 +62,39 @@ main{
     position: absolute;
     align-content: center;
     justify-content: center;
+}
+
+input[type="range"] {
+    /* removing default appearance */
+    -webkit-appearance: none;
+    appearance: none;
+    /* creating a custom design */
+    width: 20%;
+    cursor: pointer;
+    outline: none;
+    /*  slider progress trick  */
+    overflow: hidden;
+    border-radius: 16px;
+}
+
+/* Track: webkit browsers */
+input[type="range"]::-webkit-slider-runnable-track {
+    height: 15px;
+    background: #ccc;
+    border-radius: 16px;
+}
+
+/* Thumb: webkit */
+input[type="range"]::-webkit-slider-thumb {
+    /* removing default appearance */
+    -webkit-appearance: none;
+    appearance: none;
+    /* creating a custom design */
+    height: 15px;
+    width: 15px;
+    background-color: #fff;
+    border-radius: 50%;
+    border: 2px solid  rgb(74, 78, 105);
+    /*  slider progress trick  */
+    box-shadow: -407px 0 0 400px rgb(74, 78, 105);
 }
