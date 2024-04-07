@@ -18,7 +18,8 @@ maxTree.oninput = function () {
 }
 
 
-/*Обновление порога энропии*/
+let ent = 0.05;
+/*/!*Обновление порога энропии*!/
 // порог энтропии, при достижении которого следует остановить построение дерева
 const entropy = document.getElementById("entropy");
 const entropyDemo = document.getElementById("entropyDemo");
@@ -27,7 +28,7 @@ entropyDemo.innerHTML = ent;
 entropy.oninput = function () {
     entropyDemo.innerHTML = this.value;
     ent = parseFloat(entropy.value);
-}
+}*/
 
 
 /*Чтение тренировочной таблицы*/
@@ -40,39 +41,50 @@ document.getElementById("input").addEventListener("change", function () {
         data = makeTree(nowFile);
         createCheckbox(names, 'ignoredAttr');
         createSelect(names, 'categoryAttr');
-        /*TreeData(TreeAndRoot, "#tree");*/
     }
 })
 
 
 /*Чтение данный для прохода по дереву*/
-document.getElementById("input").addEventListener("change", function () {
-    let reader = new FileReader();
-    reader.readAsText(document.getElementById("input").files[0]);
+document.getElementById("inputTest").addEventListener("change", function () {
+    let reader2 = new FileReader();
+    reader2.readAsText(document.getElementById("inputTest").files[0]);
 
-    reader.onload = function () {
-        nowFile = reader.result;
-        comic = nowFile.split(",");
+    reader2.onload = function () {
+        nowComicFile = reader2.result;
+        comic = makeTree(nowComicFile)[0];
+        showTest();
     }
 })
 
-
-/*!!!Не равботает*/
-/*Созданеи высплывающего списка выбора категории построения дерева*/
-function createSelect(arr, id){
-    let str = '';
-    for (i = 0; i < arr.length; i++){
-        str = str + '<option value='+names[i]+'>'+names[i]+'</option>';
-    }
-    document.getElementById(id).innerHTML = '<label>Set category for search: <select>'+str +'</select></label>';
+function showTest(){
+    document.getElementById('testingItem').innerHTML = 'Your test input:' + JSON.stringify(comic, null, 1);
 }
 
 
+
+
+/*Созданеи высплывающего списка выбора категории построения дерева*/
+function createSelect(arr, id) {
+    let str = '';
+    for (i = 0; i < arr.length; i++) {
+        str = str + '<option value=' + names[i] + '>' + names[i] + '</option>';
+    }
+    document.getElementById(id).innerHTML = '<label>Set category for search: <select>' + str + '</select></label>';
+}
+
+
+let selEl;
+document.getElementById('categoryAttr').addEventListener('change', (event) => {
+    selEl = event.target.value;
+});
+
+
 /*Создание чекбоксов для выбора игнорируемых атрибутов*/
-function createCheckbox(arr, id){
+function createCheckbox(arr, id) {
     document.getElementById(id).innerHTML = '<label>Set ignored attributes:</label>';
     let ign = document.querySelector("#ignoredAttr");
-    for (var i = 0; i < arr.length; i++){
+    for (var i = 0; i < arr.length; i++) {
         let inp = document.createElement('input');
         inp.setAttribute("type", "checkbox");
         inp.setAttribute('id', arr[i]);
@@ -85,10 +97,10 @@ function createCheckbox(arr, id){
 
 
 /*Какие чекбоксы отметили?*/
-function checkCheckbox(arr){
+function checkCheckbox(arr) {
     let checkedArr = [];
-    for (i = 0; i < arr.length; i++){
-        if (document.getElementById(arr[i]).checked){
+    for (i = 0; i < arr.length; i++) {
+        if (document.getElementById(arr[i]).checked) {
             checkedArr.push(arr[i]);
         }
     }
@@ -158,10 +170,10 @@ var dt = function () {
     }
 
     function v(config) {
-        var trainSet = config.trainingSet, 
-            minItem = config.minItemsCount, 
-            category = config.categoryAttr, 
-            entr = config.entropyThrehold, 
+        var trainSet = config.trainingSet,
+            minItem = config.minItemsCount,
+            category = config.categoryAttr,
+            entr = config.entropyThrehold,
             mxDepth = config.maxTreeDepth,
             ignSet = config.ignoredAttributes;
 
@@ -223,7 +235,7 @@ var dt = function () {
                 entr = trainSet.pivot;
                 trainSet = category(minItem, entr) ? trainSet.match : trainSet.notMatch
             }
-            config = void 0
+            /*config = void 0*/
         }
         return config
     };
@@ -238,12 +250,14 @@ var dt = function () {
     };
     var D = {
         "==": function (config, trainSet) {
-            return config == trainSet
+            return config === trainSet
         }, ">=": function (config, trainSet) {
             return config >= trainSet
         }
-    }, m = {};
+    }
+    var m = {};
     m.DecisionTree = n;
+    console.log(n);
     m.RandomForest = p;
     return m
 }();
@@ -255,19 +269,19 @@ function doItStupidPC() {
         return;
     }
 
-    /*почемуто не работает*/
-    const selectElement = document.getElementById('categoryAttr');
-    const selectedFruit = selectElement.value;
-    console.log(selectedFruit);
+    if (selEl == undefined){
+        selEl = names[0];
+    }
+
     var config = {
         trainingSet: data,
-        categoryAttr: 'sex',
+        categoryAttr: selEl,
         /*categoryAttr: document.getElementById('categoryAttr').selectElement.value*/
         ignoredAttributes: checkCheckbox(names),
         maxTreeDepth: mtd,
         entropyThrehold: ent,
         // порог количества элементов обучающей выборки, при достижении которого следует остановить построение дерева
-        minItemsCount: 1
+        minItemsCount: 3
     };
 
 // построение дерева принятия решений:
@@ -277,7 +291,7 @@ function doItStupidPC() {
     var numberOfTrees = 3;
     var randomForest = new dt.RandomForest(config, numberOfTrees);
 
-    var comic = {person: 'Comic guy', hairLength: 8, weight: 290, age: 38};
+    /*var comic = {person: 'Comic guy', hairLength: 8, weight: 290, age: 38};*/
 
     var decisionTreePrediction = decisionTree.predict(comic);
 // результатом классификации с использованием дерева принятия решений
@@ -293,7 +307,7 @@ function doItStupidPC() {
 // тем больше вероятность того, что объект относится к данному классу
 
 // Displaying predictions
-    document.getElementById('testingItem').innerHTML = JSON.stringify(comic, null, 0);
+    /*document.getElementById('testingItem').innerHTML = JSON.stringify(comic, null, 0);*/
     document.getElementById('decisionTreePrediction').innerHTML = JSON.stringify(decisionTreePrediction, null, 0);
     document.getElementById('randomForestPrediction').innerHTML = JSON.stringify(randomForestPrediction, null, 0);
 
