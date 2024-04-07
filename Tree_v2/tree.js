@@ -1,182 +1,303 @@
+let data = [];
+let names = [];
+let comic = [];
+
+
+/*Генерация дерева*/
+document.getElementById("gen").addEventListener("click", doItStupidPC);
+
+
+/*Обновление максимальной глубины дерева*/
+const maxTree = document.getElementById("maxTree");
+const maxTreeDemo = document.getElementById("maxTreeDemo");
+let mtd = parseInt(maxTree.value);
+maxTreeDemo.innerHTML = mtd;
+maxTree.oninput = function () {
+    maxTreeDemo.innerHTML = this.value;
+    mtd = parseInt(maxTree.value);
+}
+
+
+let ent = 0.05;
+/*/!*Обновление порога энропии*!/
+// порог энтропии, при достижении которого следует остановить построение дерева
+const entropy = document.getElementById("entropy");
+const entropyDemo = document.getElementById("entropyDemo");
+let ent = parseFloat(entropy.value);
+entropyDemo.innerHTML = ent;
+entropy.oninput = function () {
+    entropyDemo.innerHTML = this.value;
+    ent = parseFloat(entropy.value);
+}*/
+
+
+/*Чтение тренировочной таблицы*/
+document.getElementById("input").addEventListener("change", function () {
+    let reader = new FileReader();
+    reader.readAsText(document.getElementById("input").files[0]);
+
+    reader.onload = function () {
+        nowFile = reader.result;
+        data = makeTree(nowFile);
+        createCheckbox(names, 'ignoredAttr');
+        createSelect(names, 'categoryAttr');
+    }
+})
+
+
+/*Чтение данный для прохода по дереву*/
+document.getElementById("inputTest").addEventListener("change", function () {
+    let reader2 = new FileReader();
+    reader2.readAsText(document.getElementById("inputTest").files[0]);
+
+    reader2.onload = function () {
+        nowComicFile = reader2.result;
+        comic = makeTree(nowComicFile)[0];
+        showTest();
+    }
+})
+
+function showTest(){
+    document.getElementById('testingItem').innerHTML = 'Your test input:' + JSON.stringify(comic, null, 1);
+}
+
+
+
+
+/*Созданеи высплывающего списка выбора категории построения дерева*/
+function createSelect(arr, id) {
+    let str = '';
+    for (i = 0; i < arr.length; i++) {
+        str = str + '<option value=' + names[i] + '>' + names[i] + '</option>';
+    }
+    document.getElementById(id).innerHTML = '<label>Set category for search: <select>' + str + '</select></label>';
+}
+
+
+let selEl;
+document.getElementById('categoryAttr').addEventListener('change', (event) => {
+    selEl = event.target.value;
+});
+
+
+/*Создание чекбоксов для выбора игнорируемых атрибутов*/
+function createCheckbox(arr, id) {
+    document.getElementById(id).innerHTML = '<label>Set ignored attributes:</label>';
+    let ign = document.querySelector("#ignoredAttr");
+    for (var i = 0; i < arr.length; i++) {
+        let inp = document.createElement('input');
+        inp.setAttribute("type", "checkbox");
+        inp.setAttribute('id', arr[i]);
+        let lab = document.createElement("label");
+        lab.innerText = arr[i];
+        ign.appendChild(inp);
+        ign.appendChild(lab);
+    }
+}
+
+
+/*Какие чекбоксы отметили?*/
+function checkCheckbox(arr) {
+    let checkedArr = [];
+    for (i = 0; i < arr.length; i++) {
+        if (document.getElementById(arr[i]).checked) {
+            checkedArr.push(arr[i]);
+        }
+    }
+    return checkedArr;
+}
+
+
+/*Разбиение тренировочных данных на категории*/
+function makeTree(inputData) {
+    var newTree = [];
+    var allTextLines = inputData.split(/\r\n|\n/);
+    names = allTextLines[0].split(',');
+    for (var i = 1; i < allTextLines.length; i++) {
+        var line = allTextLines[i].split(',');
+        var oneLine = {};
+        for (var j = 0; j < line.length; j++) {
+            var inp = +line[j];
+            oneLine[names[j]] = (isNaN(inp)) ? line[j] : inp;
+        }
+        newTree.push(oneLine);
+    }
+    return newTree;
+}
+
 var dt = function () {
-    function n(b) {
-        var c = v, e = b.trainingSet, d = b.ignoredAttributes, a = {};
-        if (d) for (var f in d) a[d[f]] = !0;
-        this.root = c({
-            trainingSet: e,
-            ignoredAttributes: a,
-            categoryAttr: b.categoryAttr || "category",
-            minItemsCount: b.minItemsCount || 1,
-            entropyThrehold: b.entropyThrehold || 0.01,
-            maxTreeDepth: b.maxTreeDepth || 70
+    function n(config) {
+        var trainSet = v, minItem = config.trainingSet, category = config.ignoredAttributes, entr = {};
+        if (category) for (var mxDepth in category) entr[category[mxDepth]] = !0;
+        this.root = trainSet({
+            trainingSet: minItem,
+            ignoredAttributes: entr,
+            categoryAttr: config.categoryAttr || "category",
+            minItemsCount: config.minItemsCount || 1,
+            entropyThrehold: config.entropyThrehold || 0.01,
+            maxTreeDepth: config.maxTreeDepth || 70
         })
     }
 
-    function p(b, c) {
-        for (var e = b.trainingSet, d = [], a = 0; a < c; a++) d[a] = [];
-        for (a = e.length - 1; 0 <= a; a--) d[a % c].push(e[a]);
-        e = [];
-        for (a = 0; a < c; a++) {
-            b.trainingSet = d[a];
-            var f = new n(b);
-            e.push(f)
+    function p(config, trainSet) {
+        for (var minItem = config.trainingSet, category = [], entr = 0; entr < trainSet; entr++) category[entr] = [];
+        for (entr = minItem.length - 1; 0 <= entr; entr--) category[entr % trainSet].push(minItem[entr]);
+        minItem = [];
+        for (entr = 0; entr < trainSet; entr++) {
+            config.trainingSet = category[entr];
+            var mxDepth = new n(config);
+            minItem.push(mxDepth)
         }
-        this.trees = e
+        this.trees = minItem
     }
 
-    function q(b,
-               c) {
-        for (var e = {}, d = b.length - 1; 0 <= d; d--) e[b[d][c]] = 0;
-        for (d = b.length - 1; 0 <= d; d--) e[b[d][c]] += 1;
-        return e
+    function q(config, trainSet) {
+        for (var minItem = {}, category = config.length - 1; 0 <= category; category--) minItem[config[category][trainSet]] = 0;
+        for (category = config.length - 1; 0 <= category; category--) minItem[config[category][trainSet]] += 1;
+        return minItem
     }
 
-    function w(b, c) {
-        var e = q(b, c), d = 0, a, f;
-        for (f in e) a = e[f] / b.length, d += -a * Math.log(a);
-        return d
+    function w(config, trainSet) {
+        var minItem = q(config, trainSet), category = 0, entr, mxDepth;
+        for (mxDepth in minItem) entr = minItem[mxDepth] / config.length, category += -entr * Math.log(entr);
+        return category
     }
 
-    function x(b, c) {
-        var e = q(b, c), d = 0, a, f;
-        for (f in e) e[f] > d && (d = e[f], a = f);
-        return a
+    function x(config, trainSet) {
+        var minItem = q(config, trainSet), category = 0, entr, mxDepth;
+        for (mxDepth in minItem) minItem[mxDepth] > category && (category = minItem[mxDepth], entr = mxDepth);
+        return entr
     }
 
-    function v(b) {
-        var c = b.trainingSet, e = b.minItemsCount, d = b.categoryAttr, a = b.entropyThrehold, f = b.maxTreeDepth,
-            n = b.ignoredAttributes;
-        if (0 == f || c.length <= e) return {category: x(c, d)};
-        e = w(c, d);
-        if (e <= a) return {category: x(c, d)};
-        for (var m = {}, a = {gain: 0},
-                 y = c.length - 1; 0 <= y; y--) {
-            var p = c[y], k;
-            for (k in p) if (k != d && !n[k]) {
+    function v(config) {
+        var trainSet = config.trainingSet,
+            minItem = config.minItemsCount,
+            category = config.categoryAttr,
+            entr = config.entropyThrehold,
+            mxDepth = config.maxTreeDepth,
+            ignSet = config.ignoredAttributes;
+
+        if (0 === mxDepth || trainSet.length <= minItem) return {category: x(trainSet, category)};
+        minItem = w(trainSet, category);
+        if (minItem <= entr) return {category: x(trainSet, category)};
+        for (var m = {}, entr = {gain: 0},
+                 y = trainSet.length - 1; 0 <= y; y--) {
+            var p = trainSet[y], k;
+            for (k in p) if (k != category && !ignSet[k]) {
                 var s = p[k], t;
                 t = "number" == typeof s ? ">=" : "==";
                 var r = k + t + s;
                 if (!m[r]) {
                     m[r] = !0;
                     var r = D[t], g;
-                    g = c;
+                    g = trainSet;
                     for (var l = k, z = r, h = s, q = [], B = [], u = void 0, C = void 0, A = g.length - 1; 0 <= A; A--) u = g[A], C = u[l], z(C, h) ? q.push(u) : B.push(u);
                     g = {match: q, notMatch: B};
-                    l = w(g.match, d);
-                    z = w(g.notMatch, d);
+                    l = w(g.match, category);
+                    z = w(g.notMatch, category);
                     h = 0;
                     h += l * g.match.length;
                     h += z * g.notMatch.length;
-                    h /= c.length;
-                    l = e - h;
-                    l > a.gain && (a = g, a.predicateName = t, a.predicate = r, a.attribute = k, a.pivot = s, a.gain = l)
+                    h /= trainSet.length;
+                    l = minItem - h;
+                    l > entr.gain && (entr = g, entr.predicateName = t, entr.predicate = r, entr.attribute = k, entr.pivot = s, entr.gain = l)
                 }
             }
         }
-        if (!a.gain) return {category: x(c, d)};
-        b.maxTreeDepth = f - 1;
-        b.trainingSet = a.match;
-        c = v(b);
-        b.trainingSet = a.notMatch;
-        b = v(b);
+        if (!entr.gain) return {category: x(trainSet, category)};
+        config.maxTreeDepth = mxDepth - 1;
+        config.trainingSet = entr.match;
+        trainSet = v(config);
+        config.trainingSet = entr.notMatch;
+        config = v(config);
         return {
-            attribute: a.attribute,
-            predicate: a.predicate,
-            predicateName: a.predicateName,
-            pivot: a.pivot,
-            match: c,
-            notMatch: b,
-            matchedCount: a.match.length,
-            notMatchedCount: a.notMatch.length
+            attribute: entr.attribute,
+            predicate: entr.predicate,
+            predicateName: entr.predicateName,
+            pivot: entr.pivot,
+            match: trainSet,
+            notMatch: config,
+            matchedCount: entr.match.length,
+            notMatchedCount: entr.notMatch.length
         }
     }
 
-    n.prototype.predict = function (b) {
-        a:{
-            for (var c = this.root, e, d, a; ;) {
-                if (c.category) {
-                    b = c.category;
-                    break a
+    n.prototype.predict = function (config) {
+        entr:{
+            for (var trainSet = this.root, minItem, category, entr; ;) {
+                if (trainSet.category) {
+                    config = trainSet.category;
+                    break entr
                 }
-                e = c.attribute;
-                e = b[e];
-                d = c.predicate;
-                a = c.pivot;
-                c = d(e, a) ? c.match : c.notMatch
+                minItem = trainSet.attribute;
+                minItem = config[minItem];
+                category = trainSet.predicate;
+                entr = trainSet.pivot;
+                trainSet = category(minItem, entr) ? trainSet.match : trainSet.notMatch
             }
-            b = void 0
+            /*config = void 0*/
         }
-        return b
+        return config
     };
-    p.prototype.predict = function (b) {
-        var c = this.trees, e = {},
-            d;
-        for (d in c) {
-            var a = c[d].predict(b);
-            e[a] = e[a] ? e[a] + 1 : 1
+    p.prototype.predict = function (config) {
+        var trainSet = this.trees, minItem = {},
+            category;
+        for (category in trainSet) {
+            var entr = trainSet[category].predict(config);
+            minItem[entr] = minItem[entr] ? minItem[entr] + 1 : 1
         }
-        return e
+        return minItem
     };
     var D = {
-        "==": function (b, c) {
-            return b == c
-        }, ">=": function (b, c) {
-            return b >= c
+        "==": function (config, trainSet) {
+            return config === trainSet
+        }, ">=": function (config, trainSet) {
+            return config >= trainSet
         }
-    }, m = {};
+    }
+    var m = {};
     m.DecisionTree = n;
+    console.log(n);
     m.RandomForest = p;
     return m
 }();
 
-// Training set
-var data =
-    [{person: 'Homer', hairLength: 0, weight: 250, age: 36, sex: 'male'},
-        {person: 'Marge', hairLength: 10, weight: 150, age: 34, sex: 'female'},
-        {person: 'Bart', hairLength: 2, weight: 90, age: 10, sex: 'male'},
-        {person: 'Lisa', hairLength: 6, weight: 78, age: 8, sex: 'female'},
-        {person: 'Maggie', hairLength: 4, weight: 20, age: 1, sex: 'female'},
-        {person: 'Abe', hairLength: 1, weight: 170, age: 70, sex: 'male'},
-        {person: 'Selma', hairLength: 8, weight: 160, age: 41, sex: 'female'},
-        {person: 'Otto', hairLength: 10, weight: 180, age: 38, sex: 'male'},
-        {person: 'Krusty', hairLength: 6, weight: 200, age: 45, sex: 'male'}];
 
-var config = {
-    // обучающая выборка
-    trainingSet: data,
+function doItStupidPC() {
+    if (data.length === 0) {
+        alert("You are the stupid man! You need to give me a file!");
+        return;
+    }
 
-    // название атрибута, который содержит название класса, к которому относится тот или иной элемент обучающей выборки
-    categoryAttr: 'sex',
+    if (selEl == undefined){
+        selEl = names[0];
+    }
 
-    // масив атрибутов, которые должны игнорироваться при построении дерева
-    ignoredAttributes: ['person'],
-
-    // при желании, можно установить ограничения:
-
-    // максимальная высота дерева
-    maxTreeDepth: 10
-
-    // порог энтропии, при достижении которого следует остановить построение дерева
-    // entropyThrehold: 0.05
-
-    // порог количества элементов обучающей выборки, при достижении которого следует остановить построение дерева
-    // minItemsCount: 3
-};
+    var config = {
+        trainingSet: data,
+        categoryAttr: selEl,
+        /*categoryAttr: document.getElementById('categoryAttr').selectElement.value*/
+        ignoredAttributes: checkCheckbox(names),
+        maxTreeDepth: mtd,
+        entropyThrehold: ent,
+        // порог количества элементов обучающей выборки, при достижении которого следует остановить построение дерева
+        minItemsCount: 3
+    };
 
 // построение дерева принятия решений:
-var decisionTree = new dt.DecisionTree(config);
+    var decisionTree = new dt.DecisionTree(config);
 
 // вот так можно пострить лес принятия решений:
-var numberOfTrees = 3;
-var randomForest = new dt.RandomForest(config, numberOfTrees);
+    var numberOfTrees = 3;
+    var randomForest = new dt.RandomForest(config, numberOfTrees);
 
-var comic = {person: 'Comic guy', hairLength: 8, weight: 290, age: 38};
+    /*var comic = {person: 'Comic guy', hairLength: 8, weight: 290, age: 38};*/
 
-var decisionTreePrediction = decisionTree.predict(comic);
+    var decisionTreePrediction = decisionTree.predict(comic);
 // результатом классификации с использованием дерева принятия решений
 // является название класса, к которому следует отнести классифицируемый объект
 
-var randomForestPrediction = randomForest.predict(comic);
+    var randomForestPrediction = randomForest.predict(comic);
 // результатом классификации с использованием леса деревьев принятия решений
 // есть объект, полями которого являются названия классов,
 // а значениями полей - является количество деревьев, которые "проголосовали" за то,
@@ -186,42 +307,46 @@ var randomForestPrediction = randomForest.predict(comic);
 // тем больше вероятность того, что объект относится к данному классу
 
 // Displaying predictions
-document.getElementById('testingItem').innerHTML = JSON.stringify(comic, null, 0);
-document.getElementById('decisionTreePrediction').innerHTML = JSON.stringify(decisionTreePrediction, null, 0);
-document.getElementById('randomForestPrediction').innerHTML = JSON.stringify(randomForestPrediction, null, 0);
+    /*document.getElementById('testingItem').innerHTML = JSON.stringify(comic, null, 0);*/
+    document.getElementById('decisionTreePrediction').innerHTML = JSON.stringify(decisionTreePrediction, null, 0);
+    document.getElementById('randomForestPrediction').innerHTML = JSON.stringify(randomForestPrediction, null, 0);
 
 // Displaying Decision Tree
-document.getElementById('displayTree').innerHTML = treeToHtml(decisionTree.root);
+    console.log(decisionTree);
+    document.getElementById('displayTree').innerHTML = treeToHtml(decisionTree.root);
 
 
 // Recursive (DFS) function for displaying inner structure of decision tree
-function treeToHtml(tree) {
-    // only leafs containing category
-    if (tree.category) {
+    function treeToHtml(tree) {
+
+        // only leafs containing category
+        if (tree.category) {
+            return ['<ul>',
+                '<li>',
+                '<a href="#">',
+                '<b>', tree.category, '</b>',
+                '</a>',
+                '</li>',
+                '</ul>'].join('');
+        }
+
         return ['<ul>',
             '<li>',
             '<a href="#">',
-            '<b>', tree.category, '</b>',
+            '<b>', tree.attribute, ' ', tree.predicateName, ' ', tree.pivot, ' ?</b>',
             '</a>',
+            '<ul>',
+            '<li>',
+            '<a href="#">yes</a>',
+            treeToHtml(tree.match),
+            '</li>',
+            '<li>',
+            '<a href="#">no</a>',
+            treeToHtml(tree.notMatch),
+            '</li>',
+            '</ul>',
             '</li>',
             '</ul>'].join('');
     }
-
-    return ['<ul>',
-        '<li>',
-        '<a href="#">',
-        '<b>', tree.attribute, ' ', tree.predicateName, ' ', tree.pivot, ' ?</b>',
-        '</a>',
-        '<ul>',
-        '<li>',
-        '<a href="#">yes</a>',
-        treeToHtml(tree.match),
-        '</li>',
-        '<li>',
-        '<a href="#">no</a>',
-        treeToHtml(tree.notMatch),
-        '</li>',
-        '</ul>',
-        '</li>',
-        '</ul>'].join('');
 }
+

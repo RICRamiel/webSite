@@ -1,44 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Tree</title>
-        <link rel="stylesheet" type="text/css" href="../Tree_v2/makeTree.css">
+<head>
+    <meta charset="UTF-8">
+    <title>Tree</title>
+    <link rel="stylesheet" type="text/css" href="../Tree_v2/makeTree.css">
 
-        <link rel="stylesheet" type="text/css" href="../Tree_v2/treePage.css">
+    <link rel="stylesheet" type="text/css" href="../Tree_v2/treePage.css">
 
-    </head>
+</head>
 
-    <body>
-        <header>
-            <a href="frontShit.html"><h1>Main</h1></a>
-            <a href="Astar.html"><h1>A*</h1></a>
-            <a href="cluster.html"><h1>Cluster</h1></a>
-            <a><h1>Gen</h1></a>
-            <a><h1>AntAlgo</h1></a>
-            <a href="Tree.html"><h1>Tree</h1></a>
-            <a href="Neuro.html"><h1>Neuro</h1></a>
-            <a href="https://docs.google.com/document/d/1rW01MhzNS2TsKEkBY4n4S7UAtf09o155a93gYLVs1xY/edit"><h1>ТЗ</h1></a>
-        </header>
+<body>
+    <header>
+        <a href="frontShit.html"><h1>Main</h1></a>
+        <a href="Astar.html"><h1>A*</h1></a>
+        <a href="cluster.html"><h1>Cluster</h1></a>
+        <a><h1>Gen</h1></a>
+        <a><h1>AntAlgo</h1></a>
+        <a href="tree_v2.html"><h1>Tree</h1></a>
+        <a href="Neuro.html"><h1>Neuro</h1></a>
+        <a href="https://docs.google.com/document/d/1rW01MhzNS2TsKEkBY4n4S7UAtf09o155a93gYLVs1xY/edit"><h1>ТЗ</h1></a>
+    </header>
 
+    <div id = 'files'>
+        <h3>Train file:</h3>
         <input type="file" id="input" accept=".csv"/>
-        <br>
-        <!--Нужно прописать выбор "персонажа" и данные для составления дерева-->
-        <b>Comic guy:</b>
+
+        <h3>Test file:</h3>
+        <input type="file" id="inputTest" accept=".csv" />
         <div id="testingItem"></div>
-        <br/>
-        <b>Decision Tree prediction:</b>
-        <div id="decisionTreePrediction"></div>
-        <br/>
-        <b>Random Forest prediction:</b>
-        <div id="randomForestPrediction"></div>
-        <br/>
-        <b>Decision Tree:</b>
-        <br/>
-
-        <div class="tree" id="displayTree"></div>
-        <script type="text/javascript" src="../Tree_v2/tree.js"></script>
+    </div>
 
 
-    </body>
+    <div id = 'settings'>
+        <h3>Tree settings: </h3>
+        <form id = 'categoryAttr'>Set category for search: </form>
+
+        <div id = "ignoredAttr">Set ignored attributes: </div>
+
+        <div>
+            <label for="maxTree">Set max tree depth:</label>
+            <input type="range" id="maxTree" min="1" max="30" value="10" step="1">
+            <span id="maxTreeDemo"></span>
+        </div>
+    </div>
+
+
+    <!--<div>
+        <label for="entropy">Set entropy threhold:</label>
+        <input type="range" id="entropy" min="0.01" max="0.1" value="0.05" step="0.01">
+        <span id="entropyDemo"></span>
+    </div>-->
+
+    <button id="gen">Do the tree</button>
+    <br/>
+    <label for="decisionTreePrediction">Answer: </label>
+    <div id="decisionTreePrediction"></div>
+    <b>Random Forest prediction:</b>
+    <div id="randomForestPrediction"></div>
+
+
+
+    <b>Decision Tree:</b>
+
+    <div class="tree" id="displayTree"></div>
+
+    <script type="text/javascript" src="../Tree_v2/tree.js"></script>
+
+</body>
 </html>
