@@ -230,6 +230,7 @@ function drawBestPath(a, pointOrder, color, thickness) {
     for (var i = 0; i < pointOrder.length - 1; i++) {
         drawPath(a[pointOrder[i]].x / cellPixelLength, a[pointOrder[i]].y / cellPixelLength, a[pointOrder[i + 1]].x / cellPixelLength, a[pointOrder[i + 1]].y / cellPixelLength, color, thickness);
     }
+    drawPath(a[pointOrder[0]].x / cellPixelLength, a[pointOrder[0]].y / cellPixelLength, a[pointOrder[pointOrder.length - 1]].x / cellPixelLength, a[pointOrder[pointOrder.length - 1]].y / cellPixelLength, color, thickness)
 }
 
 function drawAllPath() {
@@ -237,7 +238,7 @@ function drawAllPath() {
     // console.log(data);
     for (let i = 0; i < data.length; i++) {
         for (let j = 1; j < data.length; j++) {
-            drawPath(data[i][0], data[i][1], data[j][0], data[j][1],"black",1);
+            drawPath(data[i][0], data[i][1], data[j][0], data[j][1], "black", 1);
         }
     }
 }
