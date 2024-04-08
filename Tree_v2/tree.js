@@ -126,12 +126,14 @@ function makeTree(inputData) {
 }
 
 var dt = function () {
+    /*Делаем дерево решений*/
+    // Первоначальная обработка данных что-бы избежать нулевый значений
     function n(config) {
-        var trainSet = v, minItem = config.trainingSet, category = config.ignoredAttributes, entr = {};
-        if (category) for (var mxDepth in category) entr[category[mxDepth]] = !0;
+        var trainSet = v, minItem = config.trainingSet, category = config.ignoredAttributes, ignSet = {};
+        if (category) for (var mxDepth in category) ignSet[category[mxDepth]] = !0;
         this.root = trainSet({
             trainingSet: minItem,
-            ignoredAttributes: entr,
+            ignoredAttributes: ignSet,
             categoryAttr: config.categoryAttr || "category",
             minItemsCount: config.minItemsCount || 1,
             entropyThrehold: config.entropyThrehold || 0.01,
@@ -139,6 +141,8 @@ var dt = function () {
         })
     }
 
+
+/*    /!*Делаем рандомный лес*!/
     function p(config, trainSet) {
         for (var minItem = config.trainingSet, category = [], entr = 0; entr < trainSet; entr++) category[entr] = [];
         for (entr = minItem.length - 1; 0 <= entr; entr--) category[entr % trainSet].push(minItem[entr]);
@@ -149,7 +153,7 @@ var dt = function () {
             minItem.push(mxDepth)
         }
         this.trees = minItem
-    }
+    }*/
 
     function q(config, trainSet) {
         for (var minItem = {}, category = config.length - 1; 0 <= category; category--) minItem[config[category][trainSet]] = 0;
@@ -239,7 +243,7 @@ var dt = function () {
         }
         return config
     };
-    p.prototype.predict = function (config) {
+    /*p.prototype.predict = function (config) {
         var trainSet = this.trees, minItem = {},
             category;
         for (category in trainSet) {
@@ -247,7 +251,7 @@ var dt = function () {
             minItem[entr] = minItem[entr] ? minItem[entr] + 1 : 1
         }
         return minItem
-    };
+    };*/
     var D = {
         "==": function (config, trainSet) {
             return config === trainSet
@@ -258,7 +262,8 @@ var dt = function () {
     var m = {};
     m.DecisionTree = n;
     console.log(n);
-    m.RandomForest = p;
+/*    m.RandomForest = p;
+    console.log(p);*/
     return m
 }();
 
@@ -289,7 +294,7 @@ function doItStupidPC() {
 
 // вот так можно пострить лес принятия решений:
     var numberOfTrees = 3;
-    var randomForest = new dt.RandomForest(config, numberOfTrees);
+/*    var randomForest = new dt.RandomForest(config, numberOfTrees);*/
 
     /*var comic = {person: 'Comic guy', hairLength: 8, weight: 290, age: 38};*/
 
@@ -297,7 +302,7 @@ function doItStupidPC() {
 // результатом классификации с использованием дерева принятия решений
 // является название класса, к которому следует отнести классифицируемый объект
 
-    var randomForestPrediction = randomForest.predict(comic);
+/*    var randomForestPrediction = randomForest.predict(comic);*/
 // результатом классификации с использованием леса деревьев принятия решений
 // есть объект, полями которого являются названия классов,
 // а значениями полей - является количество деревьев, которые "проголосовали" за то,
@@ -309,7 +314,7 @@ function doItStupidPC() {
 // Displaying predictions
     /*document.getElementById('testingItem').innerHTML = JSON.stringify(comic, null, 0);*/
     document.getElementById('decisionTreePrediction').innerHTML = JSON.stringify(decisionTreePrediction, null, 0);
-    document.getElementById('randomForestPrediction').innerHTML = JSON.stringify(randomForestPrediction, null, 0);
+    /*document.getElementById('randomForestPrediction').innerHTML = JSON.stringify(randomForestPrediction, null, 0);*/
 
 // Displaying Decision Tree
     console.log(decisionTree);
