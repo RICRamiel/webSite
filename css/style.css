@@ -1,11 +1,30 @@
+main{
+    position: absolute;
+    align-content: center;
+    justify-content: center;
+}
 
+.mainNavigation{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap:20px;
+}
+
+.card{
+    padding: 40px;
+    height: 90px;
+    font-family: "Workbench", sans-serif;
+    outline-color: rgb(74, 78, 105);
+    border-radius: 8px;
+    font-size: large;
+}
 A:link{
     text-decoration: none;/* Убирает подчеркивание для ссылок */
 }
 
 header{
     display: flex;
-    margin-top: 0;
+    margin-top: -8px;
     align-content: center;
     justify-content: space-evenly;
     height: 100px;
@@ -37,8 +56,4 @@ a{
     font-size:75%;
     color: rgb(201, 173, 167);
 }
-main{
-    position: absolute;
-    align-content: center;
-    justify-content: center;
-}
+
