@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/content.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/style.css"/>
+</head>
+<body>
+<header>
+    <a href="frontShit.html"><h1>Main</h1></a>
+    <a><h1>A*</h1></a>
+    <a href="cluster.html"><h1>Cluster</h1></a>
+    <a href="Gen.html"><h1>Gen</h1></a>
+    <a><h1>AntAlgo</h1></a>
+    <a href="tree_v2.html"><h1>Tree</h1></a>
+    <a href="Neuro.html"><h1>Neuro</h1></a>
+    <a href="https://docs.google.com/document/d/1rW01MhzNS2TsKEkBY4n4S7UAtf09o155a93gYLVs1xY/edit"><h1>ТЗ</h1></a>
+</header>
+<h2 class="title text-center">A*</h2>
+<div class="text-center">
+    <div class="card-body">
+        <div>
+            <div class="row">
+                <div class="text col-sm-6">Choose the size of the canvas:
+                    <input type="number" id="size" min="1" max="20" value="10">
+                </div>
+                <div class="col-sm-6"><button onclick="createCanvas()" class="btn btn-primary">Create Canvas</button></div>
+                <div class="col-sm-6"><button onclick="generationLab()" class="btn btn-primary">Generate labyrinth</button></div>
+            </div>
+            <div>
+                <canvas id="canvas" width="500" height="500"></canvas>
+            </div>
+            <div>
+                <div class="row">
+                    <div class="text col-sm-6"><label for="heuristic-select" class="text">Select heuristic type:</label>
+                        <select id="heuristic-select">
+                            <option value="euclidean">Euclidean distance</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6"><button onclick="findPath()" class="btn btn-primary">Find Path</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <script src="/Astar/AstarSecond.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
