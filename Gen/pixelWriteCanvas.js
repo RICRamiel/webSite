@@ -7,25 +7,43 @@ const colorInput = document.getElementById("colorInput");
 const toggleGuide = document.getElementById("toggleGuide");
 const clearButton = document.getElementById("clearButton");
 const drawingContext = canvas.getContext("2d");
+
 const mapSize = document.getElementById("mapSize");
 const mapSizeDemo = document.getElementById("mapSizeDemo");
+
 const makePath = document.getElementById("makePath");
 const startAlgo = document.getElementById("startAlgo");
+
+const MutateProcent = document.getElementById("MutateProcent");
+const MutateProcentDemo = document.getElementById("MutateProcentDemo");
+
+const PopulationSize = document.getElementById("PopulationSize");
+const PopulationSizeDemo = document.getElementById("PopulationSizeDemo");
+
+var mutateProcent = parseInt(MutateProcent.value) / 100;
+MutateProcentDemo.innerHTML = mutateProcent * 100;
+
 var size = parseInt(mapSize.value);
 mapSizeDemo.innerHTML = size;
 
+var popSize = parseInt(PopulationSize.value);
+PopulationSizeDemo.innerHTML = popSize;
+
+
 let depth = 0;
 //for GA
-const popSize = 100;
 
+let numberBestPath = 10;
 let population = [];
 let fitness = [];
 let cities = [];
 var order = [];
+var lastBestOrder;
 
 var minDistance = Infinity;
 var bestPath;
 let totalCities;
+
 
 //on open canvas
 var CELL_SIDE_COUNT = size;
@@ -74,6 +92,15 @@ mapSize.oninput = function () {
     }
 }
 
+MutateProcent.oninput = function () {
+    mutateProcent = this.value;
+    MutateProcentDemo.innerHTML = this.value;
+}
+
+PopulationSize.oninput = function () {
+    popSize = this.value;
+    PopulationSizeDemo.innerHTML = this.value;
+}
 
 function setup() {
     order = [];
@@ -272,12 +299,19 @@ function draw(event) {
         setup();
     }
     depth += 1;
+    lastBestOrder = bestOrder;
     var bestOrder = calculateFitness();
+    console.log(lastBestOrder, bestOrder);
+
     normalizeFitness();
     generateNext();
 
     drawCities(cities);
     drawBestPath(cities, bestOrder, "purple", 9);
+    if (numberBestPath > 50) {
+        console.log("Exit because of same best path");
+        return;
+    }
     if (depth > 0 && depth < 100) {
         setTimeout(() => {
             draw(event)
