@@ -159,7 +159,7 @@ function leaf(trainSet, category) {
     return a
 }
 
-let ansColor = "rgb(201, 173, 167)";
+let ansColor = "#45A29E";
 let otherColor = "none";
 
 function makeNodes(config, color) {
