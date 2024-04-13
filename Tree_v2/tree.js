@@ -1,6 +1,6 @@
-let data = [];
-let names = [];
-let comic = [];
+var data = [];
+var names = [];
+var comic = [];
 
 
 /*Генерация дерева*/
@@ -16,19 +16,6 @@ maxTree.oninput = function () {
     maxTreeDemo.innerHTML = this.value;
     mtd = parseInt(maxTree.value);
 }
-
-
-let ent = 0.05;
-/*/!*Обновление порога энропии*!/
-// порог энтропии, при достижении которого следует остановить построение дерева
-const entropy = document.getElementById("entropy");
-const entropyDemo = document.getElementById("entropyDemo");
-let ent = parseFloat(entropy.value);
-entropyDemo.innerHTML = ent;
-entropy.oninput = function () {
-    entropyDemo.innerHTML = this.value;
-    ent = parseFloat(entropy.value);
-}*/
 
 
 /*Чтение тренировочной таблицы*/
@@ -57,14 +44,12 @@ document.getElementById("inputTest").addEventListener("change", function () {
     }
 })
 
-function showTest(){
+function showTest() {
     document.getElementById('testingItem').innerHTML = 'Your test input:' + JSON.stringify(comic, null, 1);
 }
 
 
-
-
-/*Созданеи высплывающего списка выбора категории построения дерева*/
+/*Создание всплывающего списка для выбора категории построения дерева*/
 function createSelect(arr, id) {
     let str = '';
     for (i = 0; i < arr.length; i++) {
@@ -98,10 +83,10 @@ function createCheckbox(arr, id) {
 
 /*Какие чекбоксы отметили?*/
 function checkCheckbox(arr) {
-    let checkedArr = [];
-    for (i = 0; i < arr.length; i++) {
+    let checkedArr = {};
+    for (let i = 0; i < arr.length; i++) {
         if (document.getElementById(arr[i]).checked) {
-            checkedArr.push(arr[i]);
+            checkedArr[arr[i]] = true;
         }
     }
     return checkedArr;
@@ -110,8 +95,8 @@ function checkCheckbox(arr) {
 
 /*Разбиение тренировочных данных на категории*/
 function makeTree(inputData) {
-    var newTree = [];
-    var allTextLines = inputData.split(/\r\n|\n/);
+    let newTree = [];
+    let allTextLines = inputData.split(/\r\n|\n/);
     names = allTextLines[0].split(',');
     for (var i = 1; i < allTextLines.length; i++) {
         var line = allTextLines[i].split(',');
@@ -125,147 +110,189 @@ function makeTree(inputData) {
     return newTree;
 }
 
-var dt = function () {
-    /*Делаем дерево решений*/
-    // Первоначальная обработка данных что-бы избежать нулевый значений
-    function n(config) {
-        var trainSet = v, minItem = config.trainingSet, category = config.ignoredAttributes, ignSet = {};
-        if (category) for (var mxDepth in category) ignSet[category[mxDepth]] = !0;
-        this.root = trainSet({
-            trainingSet: minItem,
-            ignoredAttributes: ignSet,
-            categoryAttr: config.categoryAttr || "category",
-            minItemsCount: config.minItemsCount || 1,
-            entropyThrehold: config.entropyThrehold || 0.01,
-            maxTreeDepth: config.maxTreeDepth || 70
-        })
+
+// _____________________________________________________________________________________________________________________
+
+// Подсчет элементов в категориях
+function countItems(trainSet, category) {
+    let numberOfElements = {};
+
+    for (let d = trainSet.length - 1; 0 <= d; d--)
+        numberOfElements[trainSet[d][category]] = 0;
+
+    for (let d = trainSet.length - 1; 0 <= d; d--)
+        numberOfElements[trainSet[d][category]] += 1;
+
+    return numberOfElements
+}
+
+
+//  энтропия Шенонна
+function ShannonEntropy(trainSet, category) {
+    let c = countItems(trainSet, category);
+    let entropy = 0;
+    let p;
+
+    for (let f in c) {
+        p = c[f] / trainSet.length;
+        entropy -= p * Math.log(p);
     }
 
+    return entropy
+}
 
-/*    /!*Делаем рандомный лес*!/
-    function p(config, trainSet) {
-        for (var minItem = config.trainingSet, category = [], entr = 0; entr < trainSet; entr++) category[entr] = [];
-        for (entr = minItem.length - 1; 0 <= entr; entr--) category[entr % trainSet].push(minItem[entr]);
-        minItem = [];
-        for (entr = 0; entr < trainSet; entr++) {
-            config.trainingSet = category[entr];
-            var mxDepth = new n(config);
-            minItem.push(mxDepth)
+
+// возвращает название категории, в зависимости от того каких элементов больше
+function leaf(trainSet, category) {
+    // е например  {female:0, male:1}
+    let e = countItems(trainSet, category);
+    let d = 0;
+    let a;
+
+    for (let f in e) {
+        if (e[f] > d) {
+            d = e[f];
+            a = f;
         }
-        this.trees = minItem
-    }*/
-
-    function q(config, trainSet) {
-        for (var minItem = {}, category = config.length - 1; 0 <= category; category--) minItem[config[category][trainSet]] = 0;
-        for (category = config.length - 1; 0 <= category; category--) minItem[config[category][trainSet]] += 1;
-        return minItem
     }
 
-    function w(config, trainSet) {
-        var minItem = q(config, trainSet), category = 0, entr, mxDepth;
-        for (mxDepth in minItem) entr = minItem[mxDepth] / config.length, category += -entr * Math.log(entr);
-        return category
-    }
+    return a
+}
 
-    function x(config, trainSet) {
-        var minItem = q(config, trainSet), category = 0, entr, mxDepth;
-        for (mxDepth in minItem) minItem[mxDepth] > category && (category = minItem[mxDepth], entr = mxDepth);
-        return entr
-    }
+let ansColor = "rgb(201, 173, 167)";
+let otherColor = "none";
 
-    function v(config) {
-        var trainSet = config.trainingSet,
-            minItem = config.minItemsCount,
-            category = config.categoryAttr,
-            entr = config.entropyThrehold,
-            mxDepth = config.maxTreeDepth,
-            ignSet = config.ignoredAttributes;
+function makeNodes(config, color) {
+    let trainSet = config.trainingSet;
+    let cat = config.categoryAttr;
+    let e = ShannonEntropy(trainSet, cat);
 
-        if (0 === mxDepth || trainSet.length <= minItem) return {category: x(trainSet, category)};
-        minItem = w(trainSet, category);
-        if (minItem <= entr) return {category: x(trainSet, category)};
-        for (var m = {}, entr = {gain: 0},
-                 y = trainSet.length - 1; 0 <= y; y--) {
-            var p = trainSet[y], k;
-            for (k in p) if (k != category && !ignSet[k]) {
-                var s = p[k], t;
-                t = "number" == typeof s ? ">=" : "==";
-                var r = k + t + s;
-                if (!m[r]) {
-                    m[r] = !0;
-                    var r = D[t], g;
-                    g = trainSet;
-                    for (var l = k, z = r, h = s, q = [], B = [], u = void 0, C = void 0, A = g.length - 1; 0 <= A; A--) u = g[A], C = u[l], z(C, h) ? q.push(u) : B.push(u);
-                    g = {match: q, notMatch: B};
-                    l = w(g.match, category);
-                    z = w(g.notMatch, category);
-                    h = 0;
-                    h += l * g.match.length;
-                    h += z * g.notMatch.length;
-                    h /= trainSet.length;
-                    l = minItem - h;
-                    l > entr.gain && (entr = g, entr.predicateName = t, entr.predicate = r, entr.attribute = k, entr.pivot = s, entr.gain = l)
+    // если выполняются условия достаточные для листа, то сразу делаю лист
+    if (0 === config.maxTreeDepth || trainSet.length <= config.minItemsCount || e <= config.entropyThreshold)
+        return {category: leaf(trainSet, cat), NodeColor: color};
+
+    let variants = {};
+    let info = {gain: 0};
+
+    for (let y = 0; y < trainSet.length; y++) {
+        let p = trainSet[y]; // строчка тренировки
+        for (let k in p) {
+            if (k === cat || config.ignoredAttributes[k])
+                continue;
+
+            let value = p[k]
+            let operator = "number" == typeof value ? ">=" : "==";
+            let question = k + operator + value;
+
+            if (!variants[question]) {
+                variants[question] = true;
+
+                question = op[operator];
+
+                let way = {match: [], notMatch: []};
+
+                for (let u = void 0, C = void 0, i = 0; i < trainSet.length; i++) {
+                    u = trainSet[i];
+                    C = u[k];
+                    question(C, value) ? way.match.push(u) : way.notMatch.push(u);
+                }
+
+                // энтропии для обоих
+                let matchEnt = ShannonEntropy(way.match, cat);
+                let notMatchEnt = ShannonEntropy(way.notMatch, cat);
+
+                let h = 0;
+                h += matchEnt * way.match.length;
+                h += notMatchEnt * way.notMatch.length;
+                h /= trainSet.length;
+
+                let difference = e - h;
+
+                if (difference > info.gain) {
+                    info = way;
+                    info.predicateName = operator;
+                    info.predicate = question;
+                    info.attribute = k;
+                    info.pivot = value;
+                    info.gain = difference;
                 }
             }
         }
-        if (!entr.gain) return {category: x(trainSet, category)};
-        config.maxTreeDepth = mxDepth - 1;
-        config.trainingSet = entr.match;
-        trainSet = v(config);
-        config.trainingSet = entr.notMatch;
-        config = v(config);
-        return {
-            attribute: entr.attribute,
-            predicate: entr.predicate,
-            predicateName: entr.predicateName,
-            pivot: entr.pivot,
-            match: trainSet,
-            notMatch: config,
-            matchedCount: entr.match.length,
-            notMatchedCount: entr.notMatch.length
-        }
     }
 
-    n.prototype.predict = function (config) {
-        entr:{
-            for (var trainSet = this.root, minItem, category, entr; ;) {
-                if (trainSet.category) {
-                    config = trainSet.category;
-                    break entr
-                }
-                minItem = trainSet.attribute;
-                minItem = config[minItem];
-                category = trainSet.predicate;
-                entr = trainSet.pivot;
-                trainSet = category(minItem, entr) ? trainSet.match : trainSet.notMatch
-            }
-            /*config = void 0*/
-        }
-        return config
-    };
-    /*p.prototype.predict = function (config) {
-        var trainSet = this.trees, minItem = {},
-            category;
-        for (category in trainSet) {
-            var entr = trainSet[category].predict(config);
-            minItem[entr] = minItem[entr] ? minItem[entr] + 1 : 1
-        }
-        return minItem
-    };*/
-    var D = {
-        "==": function (config, trainSet) {
-            return config === trainSet
-        }, ">=": function (config, trainSet) {
-            return config >= trainSet
-        }
+    // лист
+    if (!info.gain)
+        return {category: leaf(trainSet, cat), NodeColor: color};
+
+    config.maxTreeDepth--;
+
+    //сразу контролирую по каким веткам идет ответ
+    let c1 = otherColor;
+    let c2 = otherColor;
+    if (color === ansColor){
+        op[info.predicateName](comic[info.attribute], info.pivot) ? c1 = ansColor : c2 = ansColor;
     }
-    var m = {};
-    m.DecisionTree = n;
-    console.log(n);
-/*    m.RandomForest = p;
-    console.log(p);*/
-    return m
-}();
+
+    // рекурсивно разветвляем дерево дальше
+    config.trainingSet = info.match;
+    let matches = makeNodes(config, c1);
+
+    config.trainingSet = info.notMatch;
+    let notMatches = makeNodes(config,c2);
+
+    return {
+        attribute: info.attribute,
+        predicate: info.predicate,
+        predicateName: info.predicateName,
+        pivot: info.pivot,
+        match: matches,
+        notMatch: notMatches,
+        matchedCount: info.match.length,
+        notMatchedCount: info.notMatch.length,
+        NodeColor: color
+    }
+}
+
+// арифметические операторы для узлов-вопросов
+let op = {
+    "==": function (b, c) {
+        return b === c
+    },
+
+    ">=": function (b, c) {
+        return b >= c
+    }
+};
+
+function treeToHtml(tree) {
+
+    // листы
+    if (tree.category) {
+        return ['<ul><li><a style=\"background: ' +  tree.NodeColor +  '\">' +  tree.category + '</a></li></ul>'].join('');
+    }
+
+    // остальные узлы
+    return ['<ul>',
+                '<li>',
+
+                    '<a style=\"background: ' +  tree.NodeColor +  '\">',
+                        '<b>', tree.attribute, ' ', tree.predicateName, ' ', tree.pivot, ' ?</b>',
+                    '</a>',
+
+                    '<ul>',
+                        '<li>',
+                            '<a style=\"background: ' +  tree.match.NodeColor +  '\"> yes </a>',
+                            treeToHtml(tree.match),
+                        '</li>',
+                        '<li>',
+                            '<a style=\"background: ' +  tree.notMatch.NodeColor +  '\"> no </a>',
+                            treeToHtml(tree.notMatch),
+                        '</li>',
+                    '</ul>',
+
+                '</li>',
+            '</ul>'].join('');
+}
 
 
 function doItStupidPC() {
@@ -274,84 +301,17 @@ function doItStupidPC() {
         return;
     }
 
-    if (selEl == undefined){
-        selEl = names[0];
-    }
-
-    var config = {
+    let config = {
         trainingSet: data,
-        categoryAttr: selEl,
-        /*categoryAttr: document.getElementById('categoryAttr').selectElement.value*/
         ignoredAttributes: checkCheckbox(names),
-        maxTreeDepth: mtd,
-        entropyThrehold: ent,
-        // порог количества элементов обучающей выборки, при достижении которого следует остановить построение дерева
-        minItemsCount: 3
+        categoryAttr: selEl || names[0],
+        minItemsCount: 1,
+        entropyThreshold: 0.05,
+        maxTreeDepth: mtd || 70
     };
 
-// построение дерева принятия решений:
-    var decisionTree = new dt.DecisionTree(config);
-
-// вот так можно пострить лес принятия решений:
-    var numberOfTrees = 3;
-/*    var randomForest = new dt.RandomForest(config, numberOfTrees);*/
-
-    /*var comic = {person: 'Comic guy', hairLength: 8, weight: 290, age: 38};*/
-
-    var decisionTreePrediction = decisionTree.predict(comic);
-// результатом классификации с использованием дерева принятия решений
-// является название класса, к которому следует отнести классифицируемый объект
-
-/*    var randomForestPrediction = randomForest.predict(comic);*/
-// результатом классификации с использованием леса деревьев принятия решений
-// есть объект, полями которого являются названия классов,
-// а значениями полей - является количество деревьев, которые "проголосовали" за то,
-// что классифицируемый объект принадлежит к соответствующему классу
-//
-// таким образом - чем больше деревьев проголосовало за какой-то класс,
-// тем больше вероятность того, что объект относится к данному классу
-
-// Displaying predictions
-    /*document.getElementById('testingItem').innerHTML = JSON.stringify(comic, null, 0);*/
-    document.getElementById('decisionTreePrediction').innerHTML = JSON.stringify(decisionTreePrediction, null, 0);
-    /*document.getElementById('randomForestPrediction').innerHTML = JSON.stringify(randomForestPrediction, null, 0);*/
-
-// Displaying Decision Tree
+    let decisionTree = makeNodes(config, ansColor);
     console.log(decisionTree);
-    document.getElementById('displayTree').innerHTML = treeToHtml(decisionTree.root);
-
-
-// Recursive (DFS) function for displaying inner structure of decision tree
-    function treeToHtml(tree) {
-
-        // only leafs containing category
-        if (tree.category) {
-            return ['<ul>',
-                '<li>',
-                '<a href="#">',
-                '<b>', tree.category, '</b>',
-                '</a>',
-                '</li>',
-                '</ul>'].join('');
-        }
-
-        return ['<ul>',
-            '<li>',
-            '<a href="#">',
-            '<b>', tree.attribute, ' ', tree.predicateName, ' ', tree.pivot, ' ?</b>',
-            '</a>',
-            '<ul>',
-            '<li>',
-            '<a href="#">yes</a>',
-            treeToHtml(tree.match),
-            '</li>',
-            '<li>',
-            '<a href="#">no</a>',
-            treeToHtml(tree.notMatch),
-            '</li>',
-            '</ul>',
-            '</li>',
-            '</ul>'].join('');
-    }
+    document.getElementById('displayTree').innerHTML = treeToHtml(decisionTree);
 }
 
