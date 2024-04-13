@@ -1,51 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Cluster</title>
-    <link rel="stylesheet" href="../Cluster/cluster.css">
-</head>
-<body style="background: rgb(242, 233, 228)">
-<header>
-    <a href="frontShit.html"><h1>Main</h1></a>
-    <a><h1>A*</h1></a>
-    <a href="cluster.html"><h1>Cluster</h1></a>
-    <a href="Gen.html"><h1>Gen</h1></a>
-    <a><h1>AntAlgo</h1></a>
-    <a href="tree.html"><h1>Tree</h1></a>
-    <a href="Neuro.html"><h1>Neuro</h1></a>
-    <a href="https://docs.google.com/document/d/1rW01MhzNS2TsKEkBY4n4S7UAtf09o155a93gYLVs1xY/edit"><h1>ТЗ</h1></a>
-</header>
-<div>
-    <div id="guide"></div>
-    <canvas width="600" height="600" id="canvas"></canvas>
-</div>
-<div>
-    <label for="colorInput">Set Color: </label>
-    <input type="color" id="colorInput">
-</div>
-<div>
-    <label for="mapSize">Set map size:</label>
-    <input type="range" id="mapSize" min="10" max="100" value="25" step="5">
-    <span id="mapSizeDemo"></span>
-</div>
-<div>
-    <label for="toggleGuide">Show Guide: </label>
-    <input type="checkbox" id="toggleGuide" checked>
-</div>
-<div>
-    <button type="button" id="clearButton">Clear</button>
-</div>
-<div>
-    <label for="numberOfCluster">Choose number of clusters:</label>
-    <input type="range" id="numberOfCluster" min="2" max="10" value="2" step="1">
-    <span id="clusterNumDemo"></span>
-</div>
-<div>
-    <button type="button" id="clusterize">Clusterize</button>
-</div>
-<script src="../Cluster/pixelWriteCanvas.js" defer></script>
-<script src="../Cluster/clusterMainAlgo.js"></script>
-<script src="../Cluster/mathFunc/matrix.js"></script>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <title>Cluster</title>
+        <link rel="stylesheet" href="../Cluster/cluster_2.css">
+        <link rel="stylesheet" href="../css/adapt.css">
+    </head>
+
+    <body>
+        <!-- Navigation bar -->
+        <header class="header">
+            <!-- Logo -->
+            <a href="frontShit.html" class="logo">M.</a>
+
+            <!-- Hamburger icon -->
+            <input class="side-menu" type="checkbox" id="side-menu"/>
+            <label class="hamb" for="side-menu"><span class="hamb-line"></span></label>
+
+            <!-- Menu -->
+            <nav class="nav">
+                <ul class="menu">
+                    <li><a href="Astar.html"><h1>A*</h1></a></li>
+                    <li><a href="cluster.html"><h1>CLUSTER</h1></a></li>
+                    <li><a href="Gen.html"><h1>GEN</h1></a></li>
+                    <li><a href="ant.html"><h1>ANT_ALGO</h1></a></li>
+                    <li><a href="tree.html"><h1>TREE</h1></a></li>
+                    <li><a href="Neuro.html"><h1>NEURO</h1></a></li>
+                    <li><a href="https://docs.google.com/document/d/1rW01MhzNS2TsKEkBY4n4S7UAtf09o155a93gYLVs1xY/edit"><h1>ТЗ</h1></a></li>
+
+                </ul>
+            </nav>
+        </header>
+
+        <div style="margin: 20px 10% 0 10%;">
+            <div>
+                <div id="guide"></div>
+                <canvas width="600" height="600" id="canvas"></canvas>
+            </div>
+            <div>
+                <label for="colorInput">Set Color: </label>
+                <input type="color" id="colorInput">
+            </div>
+            <div>
+                <label for="mapSize">Set map size:</label>
+                <input type="range" id="mapSize" min="10" max="100" value="25" step="5">
+                <span id="mapSizeDemo"></span>
+            </div>
+            <div>
+                <label for="toggleGuide">Show Guide: </label>
+                <input type="checkbox" id="toggleGuide" checked>
+            </div>
+            <div>
+                <button type="button" id="clearButton">Clear</button>
+            </div>
+            <div>
+                <label for="numberOfCluster">Choose number of clusters:</label>
+                <input type="range" id="numberOfCluster" min="2" max="10" value="2" step="1">
+                <span id="clusterNumDemo"></span>
+            </div>
+            <div>
+                <button type="button" id="clusterize">Clusterize</button>
+            </div>
+            <script src="../Cluster/pixelWriteCanvas.js" defer></script>
+            <script src="../Cluster/clusterMainAlgo.js"></script>
+            <script src="../Cluster/mathFunc/matrix.js"></script>
+        </div>
+
+
+    </body>
 </html>

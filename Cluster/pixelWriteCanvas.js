@@ -102,7 +102,7 @@ function handleClearButtonClick() {
     const yes = confirm("Are you sure you wish to clear the canvas?");
 
     if (!yes) return;
-
+    colorHistory = {};
     drawingContext.fillStyle = "#ffffff";
     drawingContext.fillRect(0, 0, canvas.width, canvas.height);
 }

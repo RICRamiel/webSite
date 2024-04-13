@@ -1,0 +1,25 @@
+A:link {
+    text-decoration: none; /* Убирает подчеркивание для ссылок */
+}
+
+#canvas {
+    cursor: pointer;
+
+}
+
+#guide {
+    display: grid;
+    pointer-events: none;
+    position: absolute;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+#guide div {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+main {
+    /*position: absolute;*/
+    align-content: center;
+    justify-content: center;
+}
