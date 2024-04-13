@@ -3,7 +3,6 @@
  */
 const canvas = document.getElementById("canvas");
 const guide = document.getElementById("guide");
-const colorInput = document.getElementById("colorInput");
 const toggleGuide = document.getElementById("toggleGuide");
 const clearButton = document.getElementById("clearButton");
 const drawingContext = canvas.getContext("2d");
@@ -33,7 +32,7 @@ PopulationSizeDemo.innerHTML = popSize;
 let depth = 0;
 //for GA
 
-let numberBestPath = 10;
+let numberBestPath = 0;
 let population = [];
 let fitness = [];
 let cities = [];
@@ -51,7 +50,6 @@ var cellPixelLength = canvas.width / CELL_SIDE_COUNT;
 var colorHistory = {};
 //var graph = {}; //adjacency list
 // Set default color
-colorInput.value = "#000000";
 // Initialize the canvas background
 drawingContext.fillStyle = "#ffffff";
 drawingContext.fillRect(0, 0, canvas.width, canvas.height);
@@ -122,11 +120,7 @@ function handleCanvasMousedown(event) {
     const cellY = Math.floor(y / cellPixelLength);
     const currentColor = colorHistory[`${cellX}_${cellY}`];
 
-    if (event.ctrlKey) {
-        if (currentColor) {
-            colorInput.value = currentColor;
-        }
-    } else if (event.shiftKey) {
+    if (event.shiftKey) {
         deleteCell(cellX, cellY);
 
     } else {
@@ -138,8 +132,8 @@ function handleCanvasMousedown(event) {
 
 function handleClearButtonClick() {
     //const yes = confirm("Are you sure you wish to clear the canvas?");
-
     //if (!yes) return;
+    depth = 150;
     minDistance = Infinity;
     colorHistory = {};
     cities = [];
@@ -211,13 +205,13 @@ function deleteCell(cellX, cellY) {
     drawingContext.fillRect(startX, startY, cellPixelLength, cellPixelLength);
 }
 
-function fillCell(cellX, cellY, color = colorInput.value) {
+function fillCell(cellX, cellY, color = "#000000") {
     const startX = cellX * cellPixelLength;
     const startY = cellY * cellPixelLength;
 
     drawingContext.fillStyle = color;
     drawingContext.fillRect(startX, startY, cellPixelLength, cellPixelLength);
-    colorHistory[`${cellX}_${cellY}`] = colorInput.value;
+    colorHistory[`${cellX}_${cellY}`] = "#000000";
 }
 
 function reColorCell(cellX, cellY, color) {
@@ -226,7 +220,7 @@ function reColorCell(cellX, cellY, color) {
 
     drawingContext.fillStyle = color;
     drawingContext.fillRect(startX, startY, cellPixelLength, cellPixelLength);
-    colorHistory[`${cellX}_${cellY}`] = colorInput.value;
+    colorHistory[`${cellX}_${cellY}`] = "#000000";
 }
 
 function requestData() {
@@ -291,7 +285,6 @@ function draw(event) {
     //console.log(cities);
     if (event.button !== 0) {
         return;
-        return;
     }
 
     if (depth === 0) {
@@ -299,23 +292,32 @@ function draw(event) {
         setup();
     }
     depth += 1;
-    lastBestOrder = bestOrder;
-    var bestOrder = calculateFitness();
-    console.log(lastBestOrder, bestOrder);
 
+    var bestOrder = calculateFitness();
+    //console.log(bestOrder);
+    if (lastBestOrder == bestOrder) {
+        numberBestPath++;
+    } else {
+        numberBestPath = 0;
+    }
+    lastBestOrder = bestOrder;
+
+    console.log(lastBestOrder, bestOrder);
     normalizeFitness();
     generateNext();
+    console.log(population);
+    console.log(cities);
+
+    console.log(bestOrder);
 
     drawCities(cities);
     drawBestPath(cities, bestOrder, "purple", 9);
-    if (numberBestPath > 50) {
-        console.log("Exit because of same best path");
-        return;
-    }
-    if (depth > 0 && depth < 100) {
+    if (depth > 0 && depth < 100 && numberBestPath < 20) {
         setTimeout(() => {
             draw(event)
         }, 200);
+    } else {
+        console.log(numberBestPath);
     }
 }
 
