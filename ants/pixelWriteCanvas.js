@@ -20,7 +20,6 @@ var CELL_SIDE_COUNT = size;
 var cellPixelLength = canvas.width / CELL_SIDE_COUNT;
 var colorHistory = {};
 // Set default color
-colorInput.value = "#000000";
 // Initialize the canvas background
 drawingContext.fillStyle = "#ffffff";
 drawingContext.fillRect(0, 0, canvas.width, canvas.height);
@@ -43,7 +42,6 @@ mapSize.oninput = function () {
     CELL_SIDE_COUNT = size;
     cellPixelLength = canvas.width / CELL_SIDE_COUNT;
     colorHistory = {};
-    colorInput.value = "#000000";
     drawingContext.fillStyle = "#ffffff";
     drawingContext.fillRect(0, 0, canvas.width, canvas.height);
     if (toggleGuide.checked) {
@@ -68,11 +66,7 @@ function handleCanvasMousedown(event) {
     const cellY = Math.floor(y / cellPixelLength);
     const currentColor = colorHistory[`${cellX}_${cellY}`];
 
-    if (event.ctrlKey) {
-        if (currentColor) {
-            colorInput.value = currentColor;
-        }
-    } else if (event.shiftKey) {
+    if (event.shiftKey) {
         deleteCell(cellX, cellY);
 
     } else {
@@ -119,13 +113,13 @@ function deleteCell(cellX, cellY) {
     drawingContext.fillRect(startX, startY, cellPixelLength, cellPixelLength);
 }
 
-function fillCell(cellX, cellY, color = colorInput.value) {
+function fillCell(cellX, cellY, color = "#000000") {
     const startX = cellX * cellPixelLength;
     const startY = cellY * cellPixelLength;
 
     drawingContext.fillStyle = color;
     drawingContext.fillRect(startX, startY, cellPixelLength, cellPixelLength);
-    colorHistory[`${cellX}_${cellY}`] = colorInput.value;
+    colorHistory[`${cellX}_${cellY}`] = "#000000";
 }
 
 function reColorCell(cellX, cellY, color) {
@@ -134,7 +128,7 @@ function reColorCell(cellX, cellY, color) {
 
     drawingContext.fillStyle = color;
     drawingContext.fillRect(startX, startY, cellPixelLength, cellPixelLength);
-    colorHistory[`${cellX}_${cellY}`] = colorInput.value;
+    colorHistory[`${cellX}_${cellY}`] = "#000000";
 }
 
 function requestData() {

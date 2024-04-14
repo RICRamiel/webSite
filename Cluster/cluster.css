@@ -61,3 +61,25 @@ main {
     align-content: center;
     justify-content: center;
 }
+
+/*!* Track: webkit browsers *!*/
+/*input[type="range"]::-webkit-slider-runnable-track {*/
+/*    height: 15px;*/
+/*    background: #ccc;*/
+/*    border-radius: 16px;*/
+/*}*/
+
+/*!* Thumb: webkit *!*/
+/*input[type="range"]::-webkit-slider-thumb {*/
+/*    !* removing default appearance *!*/
+/*    -webkit-appearance: none;*/
+/*    appearance: none;*/
+/*    !* creating a custom design *!*/
+/*    height: 15px;*/
+/*    width: 15px;*/
+/*    background-color: #fff;*/
+/*    border-radius: 1px;*/
+/*    border: 2px solid  rgb(74, 78, 105);*/
+/*    !*  slider progress trick  *!*/
+/*    box-shadow: -407px 0 0 400px rgb(74, 78, 105);*/
+/*}*/
