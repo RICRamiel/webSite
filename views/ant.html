@@ -3,19 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <title>Ants</title>
-    <link rel="stylesheet" href="../Cluster/cluster.css">
+    <!--<link rel="stylesheet" href="../Cluster/cluster.css">-->
+    <link rel="stylesheet" href="../Cluster/cluster_2.css">
+    <link rel="stylesheet" href="../css/adapt.css">
+    <link rel="stylesheet" href="../css/buttonStyle.css">
 </head>
-<body style="background: rgb(242, 233, 228)">
-<header>
-    <a href="frontShit.html"><h1>Main</h1></a>
-    <a><h1>A*</h1></a>
-    <a href="cluster.html"><h1>Cluster</h1></a>
-    <a href="Gen.html"><h1>Gen</h1></a>
-    <a><h1>AntAlgo</h1></a>
-    <a href="tree_v2.html"><h1>Tree</h1></a>
-    <a href="Neuro.html"><h1>Neuro</h1></a>
-    <a href="https://docs.google.com/document/d/1rW01MhzNS2TsKEkBY4n4S7UAtf09o155a93gYLVs1xY/edit"><h1>ТЗ</h1></a>
+<body>
+<!-- Navigation bar -->
+<header class="header">
+    <!-- Logo -->
+    <a href="frontShit.html" class="logo">M.</a>
+
+    <!-- Hamburger icon -->
+    <input class="side-menu" type="checkbox" id="side-menu"/>
+    <label class="hamb" for="side-menu"><span class="hamb-line"></span></label>
+
+    <!-- Menu -->
+    <nav class="nav">
+        <ul class="menu">
+            <li><a href="Astar.html"><h1>A*</h1></a></li>
+            <li><a href="cluster.html"><h1>CLUSTER</h1></a></li>
+            <li><a href="Gen.html"><h1>GEN</h1></a></li>
+            <li><a href="ant.html"><h1>ANT_ALGO</h1></a></li>
+            <li><a href="tree.html"><h1>TREE</h1></a></li>
+            <li><a href="Neuro.html"><h1>NEURO</h1></a></li>
+            <li><a href="https://docs.google.com/document/d/1rW01MhzNS2TsKEkBY4n4S7UAtf09o155a93gYLVs1xY/edit"><h1>ТЗ</h1></a></li>
+
+        </ul>
+    </nav>
 </header>
+<div style="margin: 20px 5%  0 10%;">
 <div>
     <div id="guide"></div>
     <canvas width="600" height="600" id="canvas"></canvas>
@@ -44,6 +61,7 @@
     <button type="button" id="ant">Start algorithm</button>
 </div>
 <script src="../ants/pixelWriteCanvas.js" defer></script>
+</div>
 </body>
 </html>
 

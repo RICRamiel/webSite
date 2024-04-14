@@ -43,10 +43,7 @@ a{
     cursor: pointer;
     text-decoration: none;
     margin: 10px;
-    border-right: solid;
-    border-left: solid;
-    border-bottom: solid;
-    border-top: solid;
+    border: solid;
     border-radius: 20%;
     align-content: center;
     padding: 1em;
