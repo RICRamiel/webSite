@@ -3,17 +3,32 @@
  */
 const canvas = document.getElementById("canvas");
 const guide = document.getElementById("guide");
-const colorInput = document.getElementById("colorInput");
 const toggleGuide = document.getElementById("toggleGuide");
 const clearButton = document.getElementById("clearButton");
 const drawingContext = canvas.getContext("2d");
-const mapSize = document.getElementById("mapSize");
-const mapSizeDemo = document.getElementById("mapSizeDemo");
 const makePath = document.getElementById("makePath");
 const ant = document.getElementById("ant");
-var size = parseInt(mapSize.value);
 
+const mapSize = document.getElementById("mapSize");
+const mapSizeDemo = document.getElementById("mapSizeDemo");
+var size = parseInt(mapSize.value);
 mapSizeDemo.innerHTML = size;
+
+const numberAnts = document.getElementById("numAnts");
+const numberAntsDemo = document.getElementById("numAntsDemo");
+var numAnts = parseInt(numberAnts.value);
+numberAntsDemo.innerHTML = numAnts;
+
+const numberIterations = document.getElementById("numIterations");
+const numberIterationsDemo = document.getElementById("numIterationsDemo");
+var numIterations = parseInt(numberIterations.value)
+numberIterationsDemo.innerHTML = numIterations;
+
+const evaporateRate = document.getElementById("evaporationRate");
+const evaporateRateDemo = document.getElementById("evaporationRateDemo");
+var evaporationRate = parseInt(evaporateRate.value) / 100;
+evaporateRateDemo.innerHTML = parseInt(evaporateRate.value);
+
 
 //on open canvas
 var CELL_SIDE_COUNT = size;
@@ -53,6 +68,24 @@ mapSize.oninput = function () {
     guideUpdate();
 }
 guideUpdate();
+
+numberAnts.oninput = function () {
+    numAnts = this.value;
+    numberAntsDemo.innerHTML = this.value;
+    handleClearButtonClick();
+}
+
+numberIterations.oninput = function () {
+    numIterations = this.value;
+    numberIterationsDemo.innerHTML = this.value;
+    handleClearButtonClick();
+}
+
+evaporateRate.oninput = function () {
+    evaporationRate = this.value / 100;
+    evaporateRateDemo.innerHTML = this.value;
+    handleClearButtonClick();
+}
 
 function handleCanvasMousedown(event) {
     if (event.button !== 0) {
@@ -192,9 +225,9 @@ function drawCities(city) {
 let cities = formateCities();
 let numCities = cities.length;
 let pheromone = [];
-const numAnts = 10;
-const numIterations = 100;
-const evaporationRate = 0.1;
+// const numAnts = 10;
+// const numIterations = 100;
+// const evaporationRate = 0.1;
 const alpha = 1;
 const beta = 2;
 

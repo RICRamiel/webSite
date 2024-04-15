@@ -74,15 +74,6 @@ function guideUpdate() {
     }
 }
 
-// {
-//     guide.style.width = `${canvas.width}px`;
-//     guide.style.height = `${canvas.height}px`;
-//     guide.style.gridTemplateColumns = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
-//     guide.style.gridTemplateRows = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
-//
-//     [...Array(CELL_SIDE_COUNT ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
-// }
-
 
 let MakingPath = 0;
 let GraphData = [];
