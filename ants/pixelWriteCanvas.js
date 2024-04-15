@@ -23,13 +23,19 @@ var colorHistory = {};
 // Initialize the canvas background
 drawingContext.fillStyle = "#ffffff";
 drawingContext.fillRect(0, 0, canvas.width, canvas.height);
-{
-    guide.style.width = `${canvas.width}px`;
-    guide.style.height = `${canvas.height}px`;
-    guide.style.gridTemplateColumns = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
-    guide.style.gridTemplateRows = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
 
-    [...Array(CELL_SIDE_COUNT ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
+function guideUpdate() {
+    while (guide.firstChild) {
+        guide.removeChild(guide.firstChild);
+    }
+    if (toggleGuide.checked) {
+        guide.style.width = `${canvas.width}px`;
+        guide.style.height = `${canvas.height}px`;
+        guide.style.gridTemplateColumns = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
+        guide.style.gridTemplateRows = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
+        console.log(canvas.width, canvas.height, CELL_SIDE_COUNT);
+        [...Array(CELL_SIDE_COUNT ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
+    }
 }
 
 mapSize.oninput = function () {
@@ -44,15 +50,9 @@ mapSize.oninput = function () {
     colorHistory = {};
     drawingContext.fillStyle = "#ffffff";
     drawingContext.fillRect(0, 0, canvas.width, canvas.height);
-    if (toggleGuide.checked) {
-        guide.style.width = `${canvas.width}px`;
-        guide.style.height = `${canvas.height}px`;
-        guide.style.gridTemplateColumns = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
-        guide.style.gridTemplateRows = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
-
-        [...Array(CELL_SIDE_COUNT ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
-    }
+    guideUpdate();
 }
+guideUpdate();
 
 function handleCanvasMousedown(event) {
     if (event.button !== 0) {
@@ -218,7 +218,9 @@ function calculateDistance(city1, city2) {
 }
 
 function driver() {
+    tempClear();
     cities = formateCities();
+    drawCities(cities);
     numCities = cities.length;
     initializePheromoneMatrix();
     runAntColonyOptimization();
@@ -354,18 +356,26 @@ function runAntColonyOptimization() {
 
 function drawBestTrail(trail) {
     drawingContext.beginPath();
-    drawingContext.moveTo(cities[trail[0]].x, cities[trail[0]].y);
+    drawingContext.moveTo(cities[trail[0]].x + cellPixelLength / 2, cities[trail[0]].y + cellPixelLength / 2);
 
     for (let i = 1; i < trail.length; i++) {
         const city = cities[trail[i]];
-        drawingContext.lineTo(city.x, city.y);
+        drawingContext.lineTo(city.x + cellPixelLength / 2, city.y + cellPixelLength / 2);
     }
 
-    drawingContext.lineTo(cities[trail[0]].x, cities[trail[0]].y);
+    drawingContext.lineTo(cities[trail[0]].x + cellPixelLength / 2, cities[trail[0]].y + cellPixelLength / 2);
+    drawingContext.lineWidth = 5;
     drawingContext.strokeStyle = '#0000ff';
     drawingContext.stroke();
 }
 
+function updateCanv() {
+    cellPixelLength = canvas.width / CELL_SIDE_COUNT;
+    canvas.height = cellPixelLength * CELL_SIDE_COUNT;
+
+    guideUpdate();
+    handleClearButtonClick();
+}
 
 canvas.addEventListener("mousedown", handleCanvasMousedown);
 clearButton.addEventListener("click", handleClearButtonClick);

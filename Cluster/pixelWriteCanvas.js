@@ -24,13 +24,19 @@ var colorHistory = {};
 // Initialize the canvas background
 drawingContext.fillStyle = "#ffffff";
 drawingContext.fillRect(0, 0, canvas.width, canvas.height);
-{
-    guide.style.width = `${canvas.width}px`;
-    guide.style.height = `${canvas.height}px`;
-    guide.style.gridTemplateColumns = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
-    guide.style.gridTemplateRows = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
 
-    [...Array(CELL_SIDE_COUNT ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
+function guideUpdate() {
+    while (guide.firstChild) {
+        guide.removeChild(guide.firstChild);
+    }
+    if (toggleGuide.checked) {
+        guide.style.width = `${canvas.width}px`;
+        guide.style.height = `${canvas.height}px`;
+        guide.style.gridTemplateColumns = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
+        guide.style.gridTemplateRows = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
+        console.log(canvas.width, canvas.height, CELL_SIDE_COUNT);
+        [...Array(CELL_SIDE_COUNT ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
+    }
 }
 
 numberOfCluster.oninput = function () {
@@ -50,19 +56,13 @@ mapSize.oninput = function () {
     colorHistory = {};
     drawingContext.fillStyle = "#ffffff";
     drawingContext.fillRect(0, 0, canvas.width, canvas.height);
-    if (toggleGuide.checked) {
-        guide.style.width = `${canvas.width}px`;
-        guide.style.height = `${canvas.height}px`;
-        guide.style.gridTemplateColumns = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
-        guide.style.gridTemplateRows = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
-
-        [...Array(CELL_SIDE_COUNT ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
-    }
+    guideUpdate();
 }
 
 
 // Setup the guide
 
+guideUpdate();
 
 function handleCanvasMousedown(event) {
     // Ensure user is using their primary mouse button
@@ -88,9 +88,6 @@ function handleCanvasMousedown(event) {
 }
 
 function handleClearButtonClick() {
-    const yes = confirm("Are you sure you wish to clear the canvas?");
-
-    if (!yes) return;
     colorHistory = {};
     drawingContext.fillStyle = "#ffffff";
     drawingContext.fillRect(0, 0, canvas.width, canvas.height);
@@ -170,6 +167,14 @@ function colorizeOnCluster() {
 function cluster() {
     colorizeOnCluster()
     console.log("cluster done");
+}
+
+function updateCanv() {
+    cellPixelLength = canvas.width / CELL_SIDE_COUNT;
+    canvas.height = cellPixelLength * CELL_SIDE_COUNT;
+
+    guideUpdate();
+    handleClearButtonClick();
 }
 
 // canvas.addEventListener("mouseover", mouseMoveDraw);
