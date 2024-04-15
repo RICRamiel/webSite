@@ -19,6 +19,12 @@ const MutateProcentDemo = document.getElementById("MutateProcentDemo");
 const PopulationSize = document.getElementById("PopulationSize");
 const PopulationSizeDemo = document.getElementById("PopulationSizeDemo");
 
+const maxGeneration = document.getElementById("maxGeneration");
+const maxGenerationDemo = document.getElementById("maxGenerationDemo");
+
+var maxGen = parseInt(maxGeneration.value);
+maxGenerationDemo.innerHTML = maxGeneration.value;
+
 var mutateProcent = parseInt(MutateProcent.value) / 100;
 MutateProcentDemo.innerHTML = mutateProcent * 100;
 
@@ -53,14 +59,30 @@ var colorHistory = {};
 // Initialize the canvas background
 drawingContext.fillStyle = "#ffffff";
 drawingContext.fillRect(0, 0, canvas.width, canvas.height);
-{
-    guide.style.width = `${canvas.width}px`;
-    guide.style.height = `${canvas.height}px`;
-    guide.style.gridTemplateColumns = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
-    guide.style.gridTemplateRows = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
 
-    [...Array(CELL_SIDE_COUNT ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
+function guideUpdate() {
+    while (guide.firstChild) {
+        guide.removeChild(guide.firstChild);
+    }
+    if (toggleGuide.checked) {
+        guide.style.width = `${canvas.width}px`;
+        guide.style.height = `${canvas.height}px`;
+        guide.style.gridTemplateColumns = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
+        guide.style.gridTemplateRows = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
+        console.log(canvas.width, canvas.height, CELL_SIDE_COUNT);
+        [...Array(CELL_SIDE_COUNT ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
+    }
 }
+
+// {
+//     guide.style.width = `${canvas.width}px`;
+//     guide.style.height = `${canvas.height}px`;
+//     guide.style.gridTemplateColumns = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
+//     guide.style.gridTemplateRows = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
+//
+//     [...Array(CELL_SIDE_COUNT ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
+// }
+
 
 let MakingPath = 0;
 let GraphData = [];
@@ -77,28 +99,33 @@ mapSize.oninput = function () {
     cellPixelLength = canvas.width / CELL_SIDE_COUNT;
     colorHistory = {};
     graph = {};
-    colorInput.value = "#000000";
     drawingContext.fillStyle = "#ffffff";
     drawingContext.fillRect(0, 0, canvas.width, canvas.height);
-    if (toggleGuide.checked) {
-        guide.style.width = `${canvas.width}px`;
-        guide.style.height = `${canvas.height}px`;
-        guide.style.gridTemplateColumns = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
-        guide.style.gridTemplateRows = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
-
-        [...Array(CELL_SIDE_COUNT ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
-    }
+    guideUpdate();
 }
 
 MutateProcent.oninput = function () {
     mutateProcent = this.value;
     MutateProcentDemo.innerHTML = this.value;
+    handleClearButtonClick();
+    handleClearButtonClick();
 }
 
 PopulationSize.oninput = function () {
     popSize = this.value;
     PopulationSizeDemo.innerHTML = this.value;
+    handleClearButtonClick();
+    handleClearButtonClick();
 }
+
+maxGeneration.oninput = function () {
+    maxGen = this.value;
+    maxGenerationDemo.innerHTML = this.value;
+    handleClearButtonClick();
+    handleClearButtonClick();
+}
+
+guideUpdate();
 
 function setup() {
     order = [];
@@ -133,7 +160,7 @@ function handleCanvasMousedown(event) {
 function handleClearButtonClick() {
     //const yes = confirm("Are you sure you wish to clear the canvas?");
     //if (!yes) return;
-    depth = 150;
+    depth = maxGen + 100;
     minDistance = Infinity;
     colorHistory = {};
     cities = [];
@@ -283,6 +310,10 @@ function drawCities(city) {
 
 function draw(event) {
     //console.log(cities);
+    if (numberBestPath > maxGen / 2 - 1) {
+        tempClear();
+        numberBestPath = 0;
+    }
     if (event.button !== 0) {
         return;
     }
@@ -295,7 +326,7 @@ function draw(event) {
 
     var bestOrder = calculateFitness();
     //console.log(bestOrder);
-    if (lastBestOrder == bestOrder) {
+    if (lastBestOrder === bestOrder) {
         numberBestPath++;
     } else {
         numberBestPath = 0;
@@ -312,13 +343,21 @@ function draw(event) {
 
     drawCities(cities);
     drawBestPath(cities, bestOrder, "purple", 9);
-    if (depth > 0 && depth < 100 && numberBestPath < 20) {
+    if (depth > 0 && depth < maxGen && numberBestPath < maxGen / 2) {
         setTimeout(() => {
             draw(event)
-        }, 200);
+        }, timeCalc(cities.length));
     } else {
         console.log(numberBestPath);
     }
+}
+
+function updateCanv() {
+    cellPixelLength = canvas.width / CELL_SIDE_COUNT;
+    canvas.height = cellPixelLength * CELL_SIDE_COUNT;
+
+    guideUpdate();
+    handleClearButtonClick();
 }
 
 canvas.addEventListener("mousedown", handleCanvasMousedown);
