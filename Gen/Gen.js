@@ -41,7 +41,7 @@ function generateNext() {
         var orderA = pickOne(population, fitness);
         var orderB = pickOne(population, fitness);
         selectedOrder = crossOver(orderA.slice(), orderB.slice());
-        mutate(selectedOrder, 0.005);
+        mutate(selectedOrder, mutateProcent);
         newPopulation[i] = population;
     }
 

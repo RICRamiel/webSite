@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Gen</title>
+    <title>Ants</title>
     <link rel="stylesheet" href="../Cluster/cluster.css">
 </head>
 <body style="background: rgb(242, 233, 228)">
 <header>
     <a href="frontShit.html"><h1>Main</h1></a>
-    <a href="AstarSecond.html"><h1>A*</h1></a>
+    <a><h1>A*</h1></a>
     <a href="cluster.html"><h1>Cluster</h1></a>
     <a href="Gen.html"><h1>Gen</h1></a>
     <a><h1>AntAlgo</h1></a>
@@ -26,21 +26,6 @@
     <span id="mapSizeDemo"></span>
 </div>
 <div>
-    <label for="MutateProcent">MutateProcent:</label>
-    <input type="range" id="MutateProcent" min="0" max="100" value="5" step="5">
-    <span id="MutateProcentDemo"></span>
-</div>
-<div>
-    <label for="PopulationSize">PopulationSize:</label>
-    <input type="range" id="PopulationSize" min="100" max="1000" value="100" step="10">
-    <span id="PopulationSizeDemo"></span>
-</div>
-<div>
-    <label for="maxGeneration">PopulationSize:</label>
-    <input type="range" id="maxGeneration" min="100" max="1000" value="100" step="10">
-    <span id="maxGenerationDemo"></span>
-</div>
-<div>
     <label for="toggleGuide">Show Guide: </label>
     <input type="checkbox" id="toggleGuide" checked>
 </div>
@@ -50,12 +35,15 @@
 <div>
     <button type="button" id="makePath">Make Path</button>
 </div>
+<!--<div>-->
+<!--    <label for="numberOfCluster">Choose number of clusters:</label>-->
+<!--    <input type="range" id="numberOfCluster" min="2" max="10" value="2" step="1">-->
+<!--    <span id="clusterNumDemo"></span>-->
+<!--</div>-->
 <div>
-    <button type="button" id="startAlgo">Solve Genetic</button>
+    <button type="button" id="ant">Start algorithm</button>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/p5@1.4.0/lib/p5.js"></script>
-<script src="../Gen/math.js" defer></script>
-<script src="../Gen/pixelWriteCanvas.js" defer></script>
-<script src="../Gen/Gen.js" defer></script>
+<script src="../ants/pixelWriteCanvas.js" defer></script>
 </body>
 </html>
+

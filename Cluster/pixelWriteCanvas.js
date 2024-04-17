@@ -3,7 +3,6 @@
  */
 const canvas = document.getElementById("canvas");
 const guide = document.getElementById("guide");
-const colorInput = document.getElementById("colorInput");
 const toggleGuide = document.getElementById("toggleGuide");
 const clearButton = document.getElementById("clearButton");
 const drawingContext = canvas.getContext("2d");
@@ -22,7 +21,6 @@ var CELL_SIDE_COUNT = size;
 var cellPixelLength = canvas.width / CELL_SIDE_COUNT;
 var colorHistory = {};
 // Set default color
-colorInput.value = "#000000";
 // Initialize the canvas background
 drawingContext.fillStyle = "#ffffff";
 drawingContext.fillRect(0, 0, canvas.width, canvas.height);
@@ -32,9 +30,7 @@ drawingContext.fillRect(0, 0, canvas.width, canvas.height);
     guide.style.gridTemplateColumns = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
     guide.style.gridTemplateRows = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
 
-    [...Array(CELL_SIDE_COUNT ** 2)].forEach(() =>
-        guide.insertAdjacentHTML("beforeend", "<div></div>")
-    );
+    [...Array(CELL_SIDE_COUNT ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
 }
 
 numberOfCluster.oninput = function () {
@@ -52,7 +48,6 @@ mapSize.oninput = function () {
     CELL_SIDE_COUNT = size;
     cellPixelLength = canvas.width / CELL_SIDE_COUNT;
     colorHistory = {};
-    colorInput.value = "#000000";
     drawingContext.fillStyle = "#ffffff";
     drawingContext.fillRect(0, 0, canvas.width, canvas.height);
     if (toggleGuide.checked) {
@@ -61,9 +56,7 @@ mapSize.oninput = function () {
         guide.style.gridTemplateColumns = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
         guide.style.gridTemplateRows = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
 
-        [...Array(CELL_SIDE_COUNT ** 2)].forEach(() =>
-            guide.insertAdjacentHTML("beforeend", "<div></div>")
-        );
+        [...Array(CELL_SIDE_COUNT ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
     }
 }
 
@@ -84,11 +77,7 @@ function handleCanvasMousedown(event) {
     const cellY = Math.floor(y / cellPixelLength);
     const currentColor = colorHistory[`${cellX}_${cellY}`];
 
-    if (event.ctrlKey) {
-        if (currentColor) {
-            colorInput.value = currentColor;
-        }
-    } else if (event.shiftKey) {
+    if (event.shiftKey) {
         deleteCell(cellX, cellY);
         // } else if (event.MOUSEOVER) {
 
@@ -102,7 +91,7 @@ function handleClearButtonClick() {
     const yes = confirm("Are you sure you wish to clear the canvas?");
 
     if (!yes) return;
-
+    colorHistory = {};
     drawingContext.fillStyle = "#ffffff";
     drawingContext.fillRect(0, 0, canvas.width, canvas.height);
 }
@@ -123,13 +112,13 @@ function deleteCell(cellX, cellY) {
     drawingContext.fillRect(startX, startY, cellPixelLength, cellPixelLength);
 }
 
-function fillCell(cellX, cellY, color = colorInput.value) {
+function fillCell(cellX, cellY, color = "#000000") {
     const startX = cellX * cellPixelLength;
     const startY = cellY * cellPixelLength;
 
     drawingContext.fillStyle = color;
     drawingContext.fillRect(startX, startY, cellPixelLength, cellPixelLength);
-    colorHistory[`${cellX}_${cellY}`] = colorInput.value;
+    colorHistory[`${cellX}_${cellY}`] = "#000000";
 }
 
 // function mouseMoveDraw(event) {
@@ -153,7 +142,7 @@ function reColorCell(cellX, cellY, color) {
 
     drawingContext.fillStyle = color;
     drawingContext.fillRect(startX, startY, cellPixelLength, cellPixelLength);
-    colorHistory[`${cellX}_${cellY}`] = colorInput.value;
+    colorHistory[`${cellX}_${cellY}`] = "#000000";
 }
 
 function requestData() {

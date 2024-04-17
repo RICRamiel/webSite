@@ -3,52 +3,22 @@
  */
 const canvas = document.getElementById("canvas");
 const guide = document.getElementById("guide");
+const colorInput = document.getElementById("colorInput");
 const toggleGuide = document.getElementById("toggleGuide");
 const clearButton = document.getElementById("clearButton");
 const drawingContext = canvas.getContext("2d");
-
 const mapSize = document.getElementById("mapSize");
 const mapSizeDemo = document.getElementById("mapSizeDemo");
-
 const makePath = document.getElementById("makePath");
-const startAlgo = document.getElementById("startAlgo");
-
-const MutateProcent = document.getElementById("MutateProcent");
-const MutateProcentDemo = document.getElementById("MutateProcentDemo");
-
-const PopulationSize = document.getElementById("PopulationSize");
-const PopulationSizeDemo = document.getElementById("PopulationSizeDemo");
-
-var mutateProcent = parseInt(MutateProcent.value) / 100;
-MutateProcentDemo.innerHTML = mutateProcent * 100;
-
+const ant = document.getElementById("ant");
 var size = parseInt(mapSize.value);
+
 mapSizeDemo.innerHTML = size;
-
-var popSize = parseInt(PopulationSize.value);
-PopulationSizeDemo.innerHTML = popSize;
-
-
-let depth = 0;
-//for GA
-
-let numberBestPath = 0;
-let population = [];
-let fitness = [];
-let cities = [];
-var order = [];
-var lastBestOrder;
-
-var minDistance = Infinity;
-var bestPath;
-let totalCities;
-
 
 //on open canvas
 var CELL_SIDE_COUNT = size;
 var cellPixelLength = canvas.width / CELL_SIDE_COUNT;
 var colorHistory = {};
-//var graph = {}; //adjacency list
 // Set default color
 // Initialize the canvas background
 drawingContext.fillStyle = "#ffffff";
@@ -62,10 +32,6 @@ drawingContext.fillRect(0, 0, canvas.width, canvas.height);
     [...Array(CELL_SIDE_COUNT ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
 }
 
-let MakingPath = 0;
-let GraphData = [];
-
-
 mapSize.oninput = function () {
     while (guide.firstChild) {
         guide.removeChild(guide.firstChild);
@@ -76,8 +42,6 @@ mapSize.oninput = function () {
     CELL_SIDE_COUNT = size;
     cellPixelLength = canvas.width / CELL_SIDE_COUNT;
     colorHistory = {};
-    graph = {};
-    colorInput.value = "#000000";
     drawingContext.fillStyle = "#ffffff";
     drawingContext.fillRect(0, 0, canvas.width, canvas.height);
     if (toggleGuide.checked) {
@@ -88,24 +52,6 @@ mapSize.oninput = function () {
 
         [...Array(CELL_SIDE_COUNT ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
     }
-}
-
-MutateProcent.oninput = function () {
-    mutateProcent = this.value;
-    MutateProcentDemo.innerHTML = this.value;
-}
-
-PopulationSize.oninput = function () {
-    popSize = this.value;
-    PopulationSizeDemo.innerHTML = this.value;
-}
-
-function setup() {
-    order = [];
-    for (let i = 0; i < totalCities; i++) {
-        order[i] = i;
-    }
-    bestPath = cities.slice();
 }
 
 function handleCanvasMousedown(event) {
@@ -130,10 +76,13 @@ function handleCanvasMousedown(event) {
 
 }
 
+// Setup the guide
+
+
 function handleClearButtonClick() {
     //const yes = confirm("Are you sure you wish to clear the canvas?");
+
     //if (!yes) return;
-    depth = 150;
     minDistance = Infinity;
     colorHistory = {};
     cities = [];
@@ -152,47 +101,6 @@ function tempClear() {
 function handleToggleGuideChange() {
     guide.style.display = toggleGuide.checked ? null : "none";
 
-}
-
-function addPath(event) {
-    console.log("start")
-    canvas.removeEventListener('mousedown', handleCanvasMousedown)
-    canvas.addEventListener('mousedown', getPos)
-}
-
-function getPos(event) {
-    const canvasBoundingRect = canvas.getBoundingClientRect();
-    const x = event.clientX - canvasBoundingRect.left;
-    const y = event.clientY - canvasBoundingRect.top;
-    //console.log(`${x}, ${y}`);
-    const cellX = Math.floor(x / cellPixelLength);
-    const cellY = Math.floor(y / cellPixelLength);
-    //console.log(`${cellX}, ${cellY}`);
-    if (`${cellX}_${cellY}` in colorHistory) {
-        GraphData.push([cellX, cellY]);
-        MakingPath += 1;
-
-        if (MakingPath === 2) {
-            //console.log(GraphData)
-            let pathStart = GraphData[0];
-            let pathEnd = GraphData[1];
-            //console.log(graph);
-            //console.log(pathStart, pathEnd);
-            let dist = calcPointDistance(pathStart[0], pathStart[1], pathEnd[0], pathEnd[1]);
-            graph[`${pathStart[0]}_${pathStart[1]}`].push([`${pathEnd[0]}_${pathEnd[1]}`, dist]);
-            graph[`${pathEnd[0]}_${pathEnd[1]}`].push([`${pathStart[0]}_${pathStart[1]}`, dist]);
-            drawPath(pathStart[0], pathStart[1], pathEnd[0], pathEnd[1]);
-            //console.log(graph);
-
-            canvas.removeEventListener('mousedown', getPos);
-            canvas.addEventListener('mousedown', handleCanvasMousedown);
-
-            GraphData = [];
-            MakingPath = 0;
-        }
-    } else {
-        console.log('Wrong position!')
-    }
 }
 
 function deleteCell(cellX, cellY) {
@@ -281,48 +189,186 @@ function drawCities(city) {
     drawAllPath();
 }
 
-function draw(event) {
-    //console.log(cities);
-    if (event.button !== 0) {
-        return;
-    }
+let cities = formateCities();
+let numCities = cities.length;
+let pheromone = [];
+const numAnts = 10;
+const numIterations = 100;
+const evaporationRate = 0.1;
+const alpha = 1;
+const beta = 2;
 
-    if (depth === 0) {
-        totalCities = cities.length;
-        setup();
-    }
-    depth += 1;
 
-    var bestOrder = calculateFitness();
-    //console.log(bestOrder);
-    if (lastBestOrder == bestOrder) {
-        numberBestPath++;
-    } else {
-        numberBestPath = 0;
-    }
-    lastBestOrder = bestOrder;
+function initializePheromoneMatrix() {
+    pheromone = [];
 
-    console.log(lastBestOrder, bestOrder);
-    normalizeFitness();
-    generateNext();
-    console.log(population);
-    console.log(cities);
+    for (let i = 0; i < numCities; i++) {
+        pheromone.push([]);
 
-    console.log(bestOrder);
-
-    drawCities(cities);
-    drawBestPath(cities, bestOrder, "purple", 9);
-    if (depth > 0 && depth < 100 && numberBestPath < 20) {
-        setTimeout(() => {
-            draw(event)
-        }, 200);
-    } else {
-        console.log(numberBestPath);
+        for (let j = 0; j < numCities; j++) {
+            pheromone[i][j] = 1;
+        }
     }
 }
+
+function calculateDistance(city1, city2) {
+    const dx = city1.x - city2.x;
+    const dy = city1.y - city2.y;
+    return Math.sqrt(dx * dx + dy * dy);
+}
+
+function driver() {
+    cities = formateCities();
+    numCities = cities.length;
+    initializePheromoneMatrix();
+    runAntColonyOptimization();
+}
+
+function calculateProbabilities(ant, currentCity) {
+    const probabilities = [];
+
+    for (let i = 0; i < numCities; i++) {
+        if (!ant.visited[i]) {
+            const pheromoneLevel = pheromone[currentCity][i];
+            const distance = calculateDistance(cities[currentCity], cities[i]);
+            const probability = Math.pow(pheromoneLevel, alpha) * Math.pow(1 / distance, beta);
+            probabilities.push({cityIndex: i, probability});
+        }
+    }
+
+    return probabilities;
+}
+
+function chooseNextCity(ant, currentCity) {
+    const probabilities = calculateProbabilities(ant, currentCity);
+
+    const totalProbability = probabilities.reduce((sum, {probability}) => sum + probability, 0);
+    let random = Math.random() * totalProbability;
+
+    for (const {cityIndex, probability} of probabilities) {
+        random -= probability;
+        if (random <= 0) {
+            return cityIndex;
+        }
+    }
+
+    return probabilities[probabilities.length - 1].cityIndex;
+}
+
+
+function updatePheromone(trails) {
+    for (let i = 0; i < numCities; i++) {
+        for (let j = 0; j < numCities; j++) {
+            if (i !== j) {
+                pheromone[i][j] *= 1 - evaporationRate;
+            }
+        }
+    }
+
+    for (const trail of trails) {
+        const trailDistance = calculateDistanceOfTrail(trail);
+
+        for (let i = 0; i < numCities - 1; i++) {
+            const from = trail[i];
+            const to = trail[i + 1];
+            pheromone[from][to] += 1 / trailDistance;
+            pheromone[to][from] += 1 / trailDistance;
+        }
+    }
+}
+
+function calculateDistanceOfTrail(trail) {
+    let distance = 0;
+
+    for (let i = 0; i < numCities - 1; i++) {
+        const from = trail[i];
+        const to = trail[i + 1];
+        distance += calculateDistance(cities[from], cities[to]);
+    }
+
+    return distance;
+}
+
+function findBestTrail(trails) {
+    let bestTrail = trails[0];
+    let bestDistance = calculateDistanceOfTrail(bestTrail);
+
+    for (let i = 1; i < trails.length; i++) {
+        const trail = trails[i];
+        const distance = calculateDistanceOfTrail(trail);
+
+        if (distance < bestDistance) {
+            bestTrail = trail;
+            bestDistance = distance;
+        }
+    }
+
+    return {trail: bestTrail, distance: bestDistance};
+}
+
+function runAntColonyOptimization() {
+    const ants = [];
+
+    for (let i = 0; i < numAnts; i++) {
+        ants.push({trail: [], visited: new Array(numCities).fill(false)});
+    }
+    console.log(ants);
+
+    let bestTrailOverall = null;
+
+    for (let iteration = 0; iteration < numIterations; iteration++) {
+        for (const ant of ants) {
+            ant.trail = [];
+            ant.visited.fill(false);
+
+            const startCity = Math.floor(Math.random() * numCities);
+            ant.trail.push(startCity);
+            ant.visited[startCity] = true;
+
+            let currentCity = startCity;
+
+            while (ant.trail.length < numCities) {
+                const nextCity = chooseNextCity(ant, currentCity);
+                ant.trail.push(nextCity);
+                ant.visited[nextCity] = true;
+                currentCity = nextCity;
+            }
+
+            ant.trail.push(startCity);
+        }
+
+        const bestTrailIteration = findBestTrail(ants.map(ant => ant.trail));
+
+        console.log(bestTrailIteration);
+
+        if (!bestTrailOverall || bestTrailIteration.distance < bestTrailOverall.distance) {
+            bestTrailOverall = bestTrailIteration;
+        }
+
+        updatePheromone(ants.map(ant => ant.trail));
+    }
+
+    drawBestTrail(bestTrailOverall.trail);
+    console.log(`Best Distance: ${bestTrailOverall.distance}`);
+}
+
+function drawBestTrail(trail) {
+    drawingContext.beginPath();
+    drawingContext.moveTo(cities[trail[0]].x, cities[trail[0]].y);
+
+    for (let i = 1; i < trail.length; i++) {
+        const city = cities[trail[i]];
+        drawingContext.lineTo(city.x, city.y);
+    }
+
+    drawingContext.lineTo(cities[trail[0]].x, cities[trail[0]].y);
+    drawingContext.strokeStyle = '#0000ff';
+    drawingContext.stroke();
+}
+
 
 canvas.addEventListener("mousedown", handleCanvasMousedown);
 clearButton.addEventListener("click", handleClearButtonClick);
 toggleGuide.addEventListener("change", handleToggleGuideChange);
 makePath.addEventListener("click", drawAllPath);
-startAlgo.addEventListener("click", draw)
+ant.addEventListener("click", driver);

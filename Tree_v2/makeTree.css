@@ -103,6 +103,7 @@ Some other advices about displaying trees: http://stackoverflow.com/questions/16
 }
 
 .tree li a{
+    margin: 0;
     border: 1px solid #ccc;
     padding: 5px 10px;
     text-decoration: none;
@@ -123,8 +124,8 @@ Some other advices about displaying trees: http://stackoverflow.com/questions/16
 /*Time for some hover effects*/
 /*We will apply the hover effect the the lineage of the element also*/
 .tree li a:hover, .tree li a:hover+ul li a {
-    background: #c8e4f8;
-    color: #000;
+    /*background: #c8e4f8;
+    color: #000;*/
     border: 1px solid #94a0b4;
 }
 /*Connector styles on hover*/
