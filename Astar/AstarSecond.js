@@ -8,6 +8,8 @@ let d = [];
 const delay = 45;
 let start = null;
 let end = null;
+let findDraw = [];
+let condition=false;
 
 function createCanvas(){
     canvas.innerHTML = "";
@@ -63,6 +65,7 @@ function generationLab(){
     let queue = [];
     let visited = [];
     matrix = createMatrix();
+    way = [];
     for (let y = 1; y < canvasSize; y+=2) {
         for (let x = 1; x < canvasSize; x+=2) {
             matrix[x][y-1] = -1;
@@ -135,6 +138,15 @@ function showCanvas(){
 canvas.addEventListener('mousedown', handleClick);
 
 function handleClick(event) {
+    if (condition)
+    {
+        return;
+    }
+
+    if (way.length > 0){
+        ClearExtra();
+    }
+
     let rect = canvas.getBoundingClientRect();
     let x = event.clientX - rect.left;
     let y = event.clientY - rect.top;
@@ -205,7 +217,11 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 let way = [];
 async function astar(){
-
+    if(start == null || end == null){
+        alert("Выберите стартовую и конечную точки");
+        return;
+    }
+    condition=true;
     function distance(nowPos, endPos){
         return Math.abs(nowPos[0] - endPos[0]) + Math.abs(nowPos[1] - endPos[1]);
         //return Math.sqrt((nowPos[0] - endPos[0]) ** 2 + (nowPos[1] - endPos[1]) ** 2);
@@ -254,6 +270,7 @@ async function astar(){
                 queue.push(nowMove);
                 visited[nowMove[0]][nowMove[1]][3] = true;
                 drawCell(nowMove[0], nowMove[1], "#C5C6C7");
+                findDraw.push([nowMove[0], nowMove[1]]);
                 await sleep(delay);
             }
             if (visited[nowMove[0]][nowMove[1]][2] > visited[nowPos[0]][nowPos[1]][2] + 1){
@@ -271,10 +288,12 @@ async function astar(){
             break;
         }
     }
+
     ShowPath();
 }
 
 async function ShowPath(){
+    condition=true;
     if(way.length === 0){
         alert(`No path from [${start.row}, ${start.col}] to [${end.row}, ${end.col}]
 `);
@@ -286,12 +305,29 @@ async function ShowPath(){
         await  sleep(delay);
         wave += 1;
     }
+    condition = false;
+}
+
+async function ClearExtra(){
+    for(let moves of findDraw){
+        drawCell(moves[0], moves[1], '#000000');
+    }
+    for (let moves of way){
+        drawCell(moves[0], moves[1], '#000000');
+    }
+    findDraw = [];
+    way = [];
+    start = null;
+    end = null;
 }
 
 function clearCanvas(){
-    start = null;
-    end = null;
-    matrix = createMatrix();
-    way = [];
-    showCanvas();
+    if (!condition)
+    {
+        start = null;
+        end = null;
+        matrix = createMatrix();
+        way = [];
+        showCanvas();
+    }
 }
