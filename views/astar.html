@@ -30,8 +30,8 @@
         </nav>
     </header>
 
-    <div id="content">
-        <h2 class="title text-center">A*</h2>
+    <div id="content"><!--
+        <h2 class="title text-center">A*</h2>-->
         <div class="text-center">
             <div class="card-body">
                 <div>
@@ -58,16 +58,14 @@
                     <div>
                         <canvas id="canvas" width="500" height="500"></canvas>
                     </div>
-                    <div>
-                        <div class="buttons" class="row">
-                            <div><button onclick="astar()" class="btn btn-primary">Find Path</button></div>
-                            <div><button onclick="clearCanvas()"  class="btn btn-primary">Clear</button></div>
-                            <div><button onclick="createCanvas()" class="btn btn-primary">Create Canvas</button></div>
-                            <div><button onclick="generationLab()" class="btn btn-primary">Generate labyrinth</button></div>
-                        </div>
-                    </div>
                 </div>
             </div>
+        </div>
+        <div id = 'settings'> <!--class="buttons" class="row">-->
+            <div><button onclick="astar()" class="btn btn-primary">Find Path</button></div>
+            <div><button onclick="clearCanvas()"  class="btn btn-primary">Clear</button></div>
+            <div><button onclick="createCanvas()" class="btn btn-primary">Create Canvas</button></div>
+            <div><button onclick="generationLab()" class="btn btn-primary">Generate labyrinth</button></div>
         </div>
     </div>
         <script src="/astar/astar.js" defer></script>
