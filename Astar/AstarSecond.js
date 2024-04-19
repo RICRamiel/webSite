@@ -10,26 +10,31 @@ let start = null;
 let end = null;
 let findDraw = [];
 let condition=false;
+let cageSize;
 
 function createCanvas(){
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#FFFFFF';
     canvas.innerHTML = "";
     canvasSize = parseInt(document.getElementById('size').value);
-    if (canvasSize % 2 == 0) {
+    if (canvasSize % 2 === 0) {
         alert("The size of the canvas should be odd");
         return;
     }
     ROW = canvasSize;
     COL = canvasSize;
-    canvas.width = canvasSize * 50;
-    canvas.height = canvasSize * 50;
-
+    /*canvas.width = canvasSize * 25;
+    canvas.height = canvasSize * 25;*/
+    cageSize = canvas.width/canvasSize;
     ctx.beginPath();
-    for(let i = 0; i <= canvas.width; i += 50){
+
+    for(let i = 0; i <= canvas.width; i += cageSize){
         ctx.moveTo(i,0);
         ctx.lineTo(i,canvas.height);
     }
 
-    for (let i = 0; i <= canvas.height; i += 50) {
+    for (let i = 0; i <= canvas.height; i += cageSize) {
         ctx.moveTo(0, i);
         ctx.lineTo(canvas.width, i);
     }
@@ -151,8 +156,8 @@ function handleClick(event) {
     let x = event.clientX - rect.left;
     let y = event.clientY - rect.top;
 
-    let row = Math.floor(y / 50);
-    let col = Math.floor(x / 50);
+    let row = Math.floor(y / cageSize);
+    let col = Math.floor(x / cageSize);
 
     if (start !== null && start.row === row && start.col === col) {
         start = null;
@@ -208,7 +213,7 @@ function handleClick(event) {
 
 function drawCell(row, col, color) {
     ctx.fillStyle = color;
-    ctx.fillRect(col * 50, row * 50, 50, 50);
+    ctx.fillRect(col * cageSize, row * cageSize, cageSize, cageSize);
 }
 
 let avalible = [{y : 0, x : 1}, {y : 0, x : -1},
