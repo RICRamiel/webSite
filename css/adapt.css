@@ -74,6 +74,13 @@ ul{
 
 }
 
+
+#content{
+    display: flex;
+    flex-wrap: wrap;
+    gap:20px;
+}
+
 .menu a:hover{
     color: var(--dark-cyan);
     /*background-color: var(--dark-blue);*/

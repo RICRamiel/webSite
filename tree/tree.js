@@ -1,6 +1,6 @@
-var data = [];
-var names = [];
-var comic = [];
+let data = [];
+let names = [];
+let comic = [];
 
 
 /*Генерация дерева*/
@@ -69,7 +69,7 @@ document.getElementById('categoryAttr').addEventListener('change', (event) => {
 function createCheckbox(arr, id) {
     document.getElementById(id).innerHTML = '<label>Set ignored attributes:</label>';
     let ign = document.querySelector("#ignoredAttr");
-    for (var i = 0; i < arr.length; i++) {
+    for (let i = 0; i < arr.length; i++) {
         let inp = document.createElement('input');
         inp.setAttribute("type", "checkbox");
         inp.setAttribute('id', arr[i]);
@@ -98,11 +98,11 @@ function makeTree(inputData) {
     let newTree = [];
     let allTextLines = inputData.split(/\r\n|\n/);
     names = allTextLines[0].split(',');
-    for (var i = 1; i < allTextLines.length; i++) {
-        var line = allTextLines[i].split(',');
-        var oneLine = {};
-        for (var j = 0; j < line.length; j++) {
-            var inp = +line[j];
+    for (let i = 1; i < allTextLines.length; i++) {
+        let line = allTextLines[i].split(',');
+        let oneLine = {};
+        for (let j = 0; j < line.length; j++) {
+            let inp = +line[j];
             oneLine[names[j]] = (isNaN(inp)) ? line[j] : inp;
         }
         newTree.push(oneLine);
