@@ -11,7 +11,7 @@ let end = null;
 let findDraw = [];
 let condition=false;
 let cageSize;
-
+createCanvas();
 function createCanvas(){
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -135,7 +135,6 @@ function showCanvas(){
 }
 
 canvas.addEventListener('mousedown', handleClick);
-createCanvas();
 function handleClick(event) {
     if (condition)
     {
