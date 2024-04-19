@@ -3,17 +3,32 @@
  */
 const canvas = document.getElementById("canvas");
 const guide = document.getElementById("guide");
-const colorInput = document.getElementById("colorInput");
 const toggleGuide = document.getElementById("toggleGuide");
 const clearButton = document.getElementById("clearButton");
 const drawingContext = canvas.getContext("2d");
-const mapSize = document.getElementById("mapSize");
-const mapSizeDemo = document.getElementById("mapSizeDemo");
 const makePath = document.getElementById("makePath");
 const ant = document.getElementById("ant");
-var size = parseInt(mapSize.value);
 
+const mapSize = document.getElementById("mapSize");
+const mapSizeDemo = document.getElementById("mapSizeDemo");
+var size = parseInt(mapSize.value);
 mapSizeDemo.innerHTML = size;
+
+const numberAnts = document.getElementById("numAnts");
+const numberAntsDemo = document.getElementById("numAntsDemo");
+var numAnts = parseInt(numberAnts.value);
+numberAntsDemo.innerHTML = numAnts;
+
+const numberIterations = document.getElementById("numIterations");
+const numberIterationsDemo = document.getElementById("numIterationsDemo");
+var numIterations = parseInt(numberIterations.value)
+numberIterationsDemo.innerHTML = numIterations;
+
+const evaporateRate = document.getElementById("evaporationRate");
+const evaporateRateDemo = document.getElementById("evaporationRateDemo");
+var evaporationRate = parseInt(evaporateRate.value) / 100;
+evaporateRateDemo.innerHTML = parseInt(evaporateRate.value);
+
 
 //on open canvas
 var CELL_SIDE_COUNT = size;
@@ -23,13 +38,19 @@ var colorHistory = {};
 // Initialize the canvas background
 drawingContext.fillStyle = "#ffffff";
 drawingContext.fillRect(0, 0, canvas.width, canvas.height);
-{
-    guide.style.width = `${canvas.width}px`;
-    guide.style.height = `${canvas.height}px`;
-    guide.style.gridTemplateColumns = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
-    guide.style.gridTemplateRows = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
 
-    [...Array(CELL_SIDE_COUNT ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
+function guideUpdate() {
+    while (guide.firstChild) {
+        guide.removeChild(guide.firstChild);
+    }
+    if (toggleGuide.checked) {
+        guide.style.width = `${canvas.width}px`;
+        guide.style.height = `${canvas.height}px`;
+        guide.style.gridTemplateColumns = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
+        guide.style.gridTemplateRows = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
+        console.log(canvas.width, canvas.height, CELL_SIDE_COUNT);
+        [...Array(CELL_SIDE_COUNT ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
+    }
 }
 
 mapSize.oninput = function () {
@@ -44,14 +65,26 @@ mapSize.oninput = function () {
     colorHistory = {};
     drawingContext.fillStyle = "#ffffff";
     drawingContext.fillRect(0, 0, canvas.width, canvas.height);
-    if (toggleGuide.checked) {
-        guide.style.width = `${canvas.width}px`;
-        guide.style.height = `${canvas.height}px`;
-        guide.style.gridTemplateColumns = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
-        guide.style.gridTemplateRows = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
+    guideUpdate();
+}
+guideUpdate();
 
-        [...Array(CELL_SIDE_COUNT ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
-    }
+numberAnts.oninput = function () {
+    numAnts = this.value;
+    numberAntsDemo.innerHTML = this.value;
+    handleClearButtonClick();
+}
+
+numberIterations.oninput = function () {
+    numIterations = this.value;
+    numberIterationsDemo.innerHTML = this.value;
+    handleClearButtonClick();
+}
+
+evaporateRate.oninput = function () {
+    evaporationRate = this.value / 100;
+    evaporateRateDemo.innerHTML = this.value;
+    handleClearButtonClick();
 }
 
 function handleCanvasMousedown(event) {
@@ -76,13 +109,7 @@ function handleCanvasMousedown(event) {
 
 }
 
-// Setup the guide
-
-
 function handleClearButtonClick() {
-    //const yes = confirm("Are you sure you wish to clear the canvas?");
-
-    //if (!yes) return;
     minDistance = Infinity;
     colorHistory = {};
     cities = [];
@@ -192,9 +219,6 @@ function drawCities(city) {
 let cities = formateCities();
 let numCities = cities.length;
 let pheromone = [];
-const numAnts = 10;
-const numIterations = 100;
-const evaporationRate = 0.1;
 const alpha = 1;
 const beta = 2;
 
@@ -218,7 +242,9 @@ function calculateDistance(city1, city2) {
 }
 
 function driver() {
+    tempClear();
     cities = formateCities();
+    drawCities(cities);
     numCities = cities.length;
     initializePheromoneMatrix();
     runAntColonyOptimization();
@@ -354,18 +380,26 @@ function runAntColonyOptimization() {
 
 function drawBestTrail(trail) {
     drawingContext.beginPath();
-    drawingContext.moveTo(cities[trail[0]].x, cities[trail[0]].y);
+    drawingContext.moveTo(cities[trail[0]].x + cellPixelLength / 2, cities[trail[0]].y + cellPixelLength / 2);
 
     for (let i = 1; i < trail.length; i++) {
         const city = cities[trail[i]];
-        drawingContext.lineTo(city.x, city.y);
+        drawingContext.lineTo(city.x + cellPixelLength / 2, city.y + cellPixelLength / 2);
     }
 
-    drawingContext.lineTo(cities[trail[0]].x, cities[trail[0]].y);
-    drawingContext.strokeStyle = '#0000ff';
+    drawingContext.lineTo(cities[trail[0]].x + cellPixelLength / 2, cities[trail[0]].y + cellPixelLength / 2);
+    drawingContext.lineWidth = 5;
+    drawingContext.strokeStyle = 'purple';
     drawingContext.stroke();
 }
 
+function updateCanv() {
+    cellPixelLength = canvas.width / CELL_SIDE_COUNT;
+    canvas.height = cellPixelLength * CELL_SIDE_COUNT;
+
+    guideUpdate();
+    handleClearButtonClick();
+}
 
 canvas.addEventListener("mousedown", handleCanvasMousedown);
 clearButton.addEventListener("click", handleClearButtonClick);

@@ -19,6 +19,12 @@ const MutateProcentDemo = document.getElementById("MutateProcentDemo");
 const PopulationSize = document.getElementById("PopulationSize");
 const PopulationSizeDemo = document.getElementById("PopulationSizeDemo");
 
+const maxGeneration = document.getElementById("maxGeneration");
+const maxGenerationDemo = document.getElementById("maxGenerationDemo");
+
+var maxGen = parseInt(maxGeneration.value);
+maxGenerationDemo.innerHTML = maxGeneration.value;
+
 var mutateProcent = parseInt(MutateProcent.value) / 100;
 MutateProcentDemo.innerHTML = mutateProcent * 100;
 
@@ -53,14 +59,21 @@ var colorHistory = {};
 // Initialize the canvas background
 drawingContext.fillStyle = "#ffffff";
 drawingContext.fillRect(0, 0, canvas.width, canvas.height);
-{
-    guide.style.width = `${canvas.width}px`;
-    guide.style.height = `${canvas.height}px`;
-    guide.style.gridTemplateColumns = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
-    guide.style.gridTemplateRows = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
 
-    [...Array(CELL_SIDE_COUNT ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
+function guideUpdate() {
+    while (guide.firstChild) {
+        guide.removeChild(guide.firstChild);
+    }
+    if (toggleGuide.checked) {
+        guide.style.width = `${canvas.width}px`;
+        guide.style.height = `${canvas.height}px`;
+        guide.style.gridTemplateColumns = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
+        guide.style.gridTemplateRows = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
+        console.log(canvas.width, canvas.height, CELL_SIDE_COUNT);
+        [...Array(CELL_SIDE_COUNT ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
+    }
 }
+
 
 let MakingPath = 0;
 let GraphData = [];
@@ -77,28 +90,30 @@ mapSize.oninput = function () {
     cellPixelLength = canvas.width / CELL_SIDE_COUNT;
     colorHistory = {};
     graph = {};
-    colorInput.value = "#000000";
     drawingContext.fillStyle = "#ffffff";
     drawingContext.fillRect(0, 0, canvas.width, canvas.height);
-    if (toggleGuide.checked) {
-        guide.style.width = `${canvas.width}px`;
-        guide.style.height = `${canvas.height}px`;
-        guide.style.gridTemplateColumns = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
-        guide.style.gridTemplateRows = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
-
-        [...Array(CELL_SIDE_COUNT ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
-    }
+    guideUpdate();
 }
 
 MutateProcent.oninput = function () {
     mutateProcent = this.value;
     MutateProcentDemo.innerHTML = this.value;
+    handleClearButtonClick();
 }
 
 PopulationSize.oninput = function () {
     popSize = this.value;
     PopulationSizeDemo.innerHTML = this.value;
+    handleClearButtonClick();
 }
+
+maxGeneration.oninput = function () {
+    maxGen = this.value;
+    maxGenerationDemo.innerHTML = this.value;
+    handleClearButtonClick();
+}
+
+guideUpdate();
 
 function setup() {
     order = [];
@@ -131,9 +146,15 @@ function handleCanvasMousedown(event) {
 }
 
 function handleClearButtonClick() {
-    //const yes = confirm("Are you sure you wish to clear the canvas?");
-    //if (!yes) return;
-    depth = 150;
+    depth = maxGen + 100;
+    setTimeout(() => {
+        minDistance = Infinity;
+        colorHistory = {};
+        cities = [];
+        population = [];
+        fitness = [];
+        depth = 0;
+    }, 100);
     minDistance = Infinity;
     colorHistory = {};
     cities = [];
@@ -154,46 +175,6 @@ function handleToggleGuideChange() {
 
 }
 
-function addPath(event) {
-    console.log("start")
-    canvas.removeEventListener('mousedown', handleCanvasMousedown)
-    canvas.addEventListener('mousedown', getPos)
-}
-
-function getPos(event) {
-    const canvasBoundingRect = canvas.getBoundingClientRect();
-    const x = event.clientX - canvasBoundingRect.left;
-    const y = event.clientY - canvasBoundingRect.top;
-    //console.log(`${x}, ${y}`);
-    const cellX = Math.floor(x / cellPixelLength);
-    const cellY = Math.floor(y / cellPixelLength);
-    //console.log(`${cellX}, ${cellY}`);
-    if (`${cellX}_${cellY}` in colorHistory) {
-        GraphData.push([cellX, cellY]);
-        MakingPath += 1;
-
-        if (MakingPath === 2) {
-            //console.log(GraphData)
-            let pathStart = GraphData[0];
-            let pathEnd = GraphData[1];
-            //console.log(graph);
-            //console.log(pathStart, pathEnd);
-            let dist = calcPointDistance(pathStart[0], pathStart[1], pathEnd[0], pathEnd[1]);
-            graph[`${pathStart[0]}_${pathStart[1]}`].push([`${pathEnd[0]}_${pathEnd[1]}`, dist]);
-            graph[`${pathEnd[0]}_${pathEnd[1]}`].push([`${pathStart[0]}_${pathStart[1]}`, dist]);
-            drawPath(pathStart[0], pathStart[1], pathEnd[0], pathEnd[1]);
-            //console.log(graph);
-
-            canvas.removeEventListener('mousedown', getPos);
-            canvas.addEventListener('mousedown', handleCanvasMousedown);
-
-            GraphData = [];
-            MakingPath = 0;
-        }
-    } else {
-        console.log('Wrong position!')
-    }
-}
 
 function deleteCell(cellX, cellY) {
     const startX = cellX * cellPixelLength;
@@ -294,31 +275,33 @@ function draw(event) {
     depth += 1;
 
     var bestOrder = calculateFitness();
-    //console.log(bestOrder);
-    if (lastBestOrder == bestOrder) {
+    if (lastBestOrder === bestOrder) {
         numberBestPath++;
     } else {
         numberBestPath = 0;
     }
     lastBestOrder = bestOrder;
 
-    console.log(lastBestOrder, bestOrder);
     normalizeFitness();
     generateNext();
-    console.log(population);
-    console.log(cities);
-
-    console.log(bestOrder);
-
+    console.log(depth)
     drawCities(cities);
     drawBestPath(cities, bestOrder, "purple", 9);
-    if (depth > 0 && depth < 100 && numberBestPath < 20) {
+    if (depth > 0 && depth < maxGen && numberBestPath < maxGen / 2) {
         setTimeout(() => {
             draw(event)
-        }, 200);
+        }, timeCalc(cities.length));
     } else {
         console.log(numberBestPath);
     }
+}
+
+function updateCanv() {
+    cellPixelLength = canvas.width / CELL_SIDE_COUNT;
+    canvas.height = cellPixelLength * CELL_SIDE_COUNT;
+
+    guideUpdate();
+    handleClearButtonClick();
 }
 
 canvas.addEventListener("mousedown", handleCanvasMousedown);
