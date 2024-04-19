@@ -1,16 +1,14 @@
 let pheromone = [];
-const numAnts = 10;
-const numIterations = 100;
-const evaporationRate = 0.1;
+// const numAnts = 10;
+// const numIterations = 100;
+// const evaporationRate = 0.1;
 const alpha = 1;
 const beta = 2;
 
 function initializePheromoneMatrix() {
     pheromone = [];
-
     for (let i = 0; i < numCities; i++) {
         pheromone.push([]);
-
         for (let j = 0; j < numCities; j++) {
             pheromone[i][j] = 1;
         }
@@ -32,7 +30,6 @@ function driver() {
 
 function calculateProbabilities(ant, currentCity) {
     const probabilities = [];
-
     for (let i = 0; i < numCities; i++) {
         if (!ant.visited[i]) {
             const pheromoneLevel = pheromone[currentCity][i];
@@ -41,7 +38,6 @@ function calculateProbabilities(ant, currentCity) {
             probabilities.push({cityIndex: i, probability});
         }
     }
-
     return probabilities;
 }
 
@@ -165,6 +161,6 @@ function drawBestTrail(trail) {
     }
 
     drawingContext.lineTo(cities[trail[0]].x, cities[trail[0]].y);
-    drawingContext.strokeStyle = '#0000ff';
+    drawingContext.strokeStyle = 'purple';
     drawingContext.stroke();
 }

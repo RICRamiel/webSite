@@ -99,20 +99,17 @@ MutateProcent.oninput = function () {
     mutateProcent = this.value;
     MutateProcentDemo.innerHTML = this.value;
     handleClearButtonClick();
-    handleClearButtonClick();
 }
 
 PopulationSize.oninput = function () {
     popSize = this.value;
     PopulationSizeDemo.innerHTML = this.value;
     handleClearButtonClick();
-    handleClearButtonClick();
 }
 
 maxGeneration.oninput = function () {
     maxGen = this.value;
     maxGenerationDemo.innerHTML = this.value;
-    handleClearButtonClick();
     handleClearButtonClick();
 }
 
@@ -149,9 +146,15 @@ function handleCanvasMousedown(event) {
 }
 
 function handleClearButtonClick() {
-    //const yes = confirm("Are you sure you wish to clear the canvas?");
-    //if (!yes) return;
     depth = maxGen + 100;
+    setTimeout(() => {
+        minDistance = Infinity;
+        colorHistory = {};
+        cities = [];
+        population = [];
+        fitness = [];
+        depth = 0;
+    }, 100);
     minDistance = Infinity;
     colorHistory = {};
     cities = [];
@@ -172,46 +175,6 @@ function handleToggleGuideChange() {
 
 }
 
-function addPath(event) {
-    console.log("start")
-    canvas.removeEventListener('mousedown', handleCanvasMousedown)
-    canvas.addEventListener('mousedown', getPos)
-}
-
-function getPos(event) {
-    const canvasBoundingRect = canvas.getBoundingClientRect();
-    const x = event.clientX - canvasBoundingRect.left;
-    const y = event.clientY - canvasBoundingRect.top;
-    //console.log(`${x}, ${y}`);
-    const cellX = Math.floor(x / cellPixelLength);
-    const cellY = Math.floor(y / cellPixelLength);
-    //console.log(`${cellX}, ${cellY}`);
-    if (`${cellX}_${cellY}` in colorHistory) {
-        GraphData.push([cellX, cellY]);
-        MakingPath += 1;
-
-        if (MakingPath === 2) {
-            //console.log(GraphData)
-            let pathStart = GraphData[0];
-            let pathEnd = GraphData[1];
-            //console.log(graph);
-            //console.log(pathStart, pathEnd);
-            let dist = calcPointDistance(pathStart[0], pathStart[1], pathEnd[0], pathEnd[1]);
-            graph[`${pathStart[0]}_${pathStart[1]}`].push([`${pathEnd[0]}_${pathEnd[1]}`, dist]);
-            graph[`${pathEnd[0]}_${pathEnd[1]}`].push([`${pathStart[0]}_${pathStart[1]}`, dist]);
-            drawPath(pathStart[0], pathStart[1], pathEnd[0], pathEnd[1]);
-            //console.log(graph);
-
-            canvas.removeEventListener('mousedown', getPos);
-            canvas.addEventListener('mousedown', handleCanvasMousedown);
-
-            GraphData = [];
-            MakingPath = 0;
-        }
-    } else {
-        console.log('Wrong position!')
-    }
-}
 
 function deleteCell(cellX, cellY) {
     const startX = cellX * cellPixelLength;
@@ -301,10 +264,6 @@ function drawCities(city) {
 
 function draw(event) {
     //console.log(cities);
-    if (numberBestPath > maxGen / 2 - 1) {
-        tempClear();
-        numberBestPath = 0;
-    }
     if (event.button !== 0) {
         return;
     }
@@ -316,7 +275,6 @@ function draw(event) {
     depth += 1;
 
     var bestOrder = calculateFitness();
-    //console.log(bestOrder);
     if (lastBestOrder === bestOrder) {
         numberBestPath++;
     } else {
@@ -324,14 +282,9 @@ function draw(event) {
     }
     lastBestOrder = bestOrder;
 
-    console.log(lastBestOrder, bestOrder);
     normalizeFitness();
     generateNext();
-    console.log(population);
-    console.log(cities);
-
-    console.log(bestOrder);
-
+    console.log(depth)
     drawCities(cities);
     drawBestPath(cities, bestOrder, "purple", 9);
     if (depth > 0 && depth < maxGen && numberBestPath < maxGen / 2) {

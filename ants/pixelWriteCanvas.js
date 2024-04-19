@@ -109,13 +109,7 @@ function handleCanvasMousedown(event) {
 
 }
 
-// Setup the guide
-
-
 function handleClearButtonClick() {
-    //const yes = confirm("Are you sure you wish to clear the canvas?");
-
-    //if (!yes) return;
     minDistance = Infinity;
     colorHistory = {};
     cities = [];
@@ -225,9 +219,6 @@ function drawCities(city) {
 let cities = formateCities();
 let numCities = cities.length;
 let pheromone = [];
-// const numAnts = 10;
-// const numIterations = 100;
-// const evaporationRate = 0.1;
 const alpha = 1;
 const beta = 2;
 
@@ -398,7 +389,7 @@ function drawBestTrail(trail) {
 
     drawingContext.lineTo(cities[trail[0]].x + cellPixelLength / 2, cities[trail[0]].y + cellPixelLength / 2);
     drawingContext.lineWidth = 5;
-    drawingContext.strokeStyle = '#0000ff';
+    drawingContext.strokeStyle = 'purple';
     drawingContext.stroke();
 }
 

@@ -19,5 +19,5 @@ function getDistance(a, pointOrder) {
 
 
 function timeCalc(x) {
-    return 4000 / (x * 1000) + 50;
+    return 4000 / (x * 100) + 50;
 }
