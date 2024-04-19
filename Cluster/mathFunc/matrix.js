@@ -1,3 +1,5 @@
+//Взял js с матрицами отсюда https://github.com/trekhleb/javascript-algorithms/tree/master/src/algorithms/math/matrix
+
 /**
  * @typedef {number} Cell
  * @typedef {Cell[][]|Cell[][][]} Matrix

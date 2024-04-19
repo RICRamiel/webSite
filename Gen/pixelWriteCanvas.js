@@ -22,16 +22,16 @@ const PopulationSizeDemo = document.getElementById("PopulationSizeDemo");
 const maxGeneration = document.getElementById("maxGeneration");
 const maxGenerationDemo = document.getElementById("maxGenerationDemo");
 
-var maxGen = parseInt(maxGeneration.value);
+let maxGen = parseInt(maxGeneration.value);
 maxGenerationDemo.innerHTML = maxGeneration.value;
 
-var mutateProcent = parseInt(MutateProcent.value) / 100;
+let mutateProcent = parseInt(MutateProcent.value) / 100;
 MutateProcentDemo.innerHTML = mutateProcent * 100;
 
-var size = parseInt(mapSize.value);
+let size = parseInt(mapSize.value);
 mapSizeDemo.innerHTML = size;
 
-var popSize = parseInt(PopulationSize.value);
+let popSize = parseInt(PopulationSize.value);
 PopulationSizeDemo.innerHTML = popSize;
 
 
@@ -42,19 +42,19 @@ let numberBestPath = 0;
 let population = [];
 let fitness = [];
 let cities = [];
-var order = [];
-var lastBestOrder;
+let order = [];
+let lastBestOrder;
 
-var minDistance = Infinity;
-var bestPath;
+let minDistance = Infinity;
+let bestPath;
 let totalCities;
-
+let timeOutID;
 
 //on open canvas
-var CELL_SIDE_COUNT = size;
-var cellPixelLength = canvas.width / CELL_SIDE_COUNT;
-var colorHistory = {};
-//var graph = {}; //adjacency list
+let cellSideCount = size;
+let cellPixelLength = canvas.width / cellSideCount;
+let colorHistory = {};
+//let graph = {}; //adjacency list
 // Set default color
 // Initialize the canvas background
 drawingContext.fillStyle = "#ffffff";
@@ -67,10 +67,9 @@ function guideUpdate() {
     if (toggleGuide.checked) {
         guide.style.width = `${canvas.width}px`;
         guide.style.height = `${canvas.height}px`;
-        guide.style.gridTemplateColumns = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
-        guide.style.gridTemplateRows = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
-        console.log(canvas.width, canvas.height, CELL_SIDE_COUNT);
-        [...Array(CELL_SIDE_COUNT ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
+        guide.style.gridTemplateColumns = `repeat(${cellSideCount}, 1fr)`;
+        guide.style.gridTemplateRows = `repeat(${cellSideCount}, 1fr)`;
+        [...Array(cellSideCount ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
     }
 }
 
@@ -86,8 +85,8 @@ mapSize.oninput = function () {
     mapSizeDemo.innerHTML = this.value;
     size = parseInt(this.value);
 
-    CELL_SIDE_COUNT = size;
-    cellPixelLength = canvas.width / CELL_SIDE_COUNT;
+    cellSideCount = size;
+    cellPixelLength = canvas.width / cellSideCount;
     colorHistory = {};
     graph = {};
     drawingContext.fillStyle = "#ffffff";
@@ -147,14 +146,15 @@ function handleCanvasMousedown(event) {
 
 function handleClearButtonClick() {
     depth = maxGen + 100;
-    setTimeout(() => {
-        minDistance = Infinity;
-        colorHistory = {};
-        cities = [];
-        population = [];
-        fitness = [];
-        depth = 0;
-    }, 100);
+    clearTimeout(timeOutID);
+    // setTimeout(() => {
+    //     minDistance = Infinity;
+    //     colorHistory = {};
+    //     cities = [];
+    //     population = [];
+    //     fitness = [];
+    //     depth = 0;
+    // }, 100);
     minDistance = Infinity;
     colorHistory = {};
     cities = [];
@@ -210,7 +210,6 @@ function requestData() {
     for (let i = 0; i < keys.length; i++) {
         data.push(keys[i].split("_").map(Number));
     }
-    //console.log(data);
     return data;
 }
 
@@ -229,7 +228,7 @@ function drawPath(x1, y1, x2, y2, color = "#000000", thickness = 2) {
 }
 
 function drawBestPath(a, pointOrder, color, thickness) {
-    for (var i = 0; i < pointOrder.length - 1; i++) {
+    for (let i = 0; i < pointOrder.length - 1; i++) {
         drawPath(a[pointOrder[i]].x / cellPixelLength, a[pointOrder[i]].y / cellPixelLength, a[pointOrder[i + 1]].x / cellPixelLength, a[pointOrder[i + 1]].y / cellPixelLength, color, thickness);
     }
     drawPath(a[pointOrder[0]].x / cellPixelLength, a[pointOrder[0]].y / cellPixelLength, a[pointOrder[pointOrder.length - 1]].x / cellPixelLength, a[pointOrder[pointOrder.length - 1]].y / cellPixelLength, color, thickness)
@@ -237,7 +236,6 @@ function drawBestPath(a, pointOrder, color, thickness) {
 
 function drawAllPath() {
     let data = requestData();
-    // console.log(data);
     for (let i = 0; i < data.length; i++) {
         for (let j = 1; j < data.length; j++) {
             drawPath(data[i][0], data[i][1], data[j][0], data[j][1], "black", 1);
@@ -256,15 +254,20 @@ function formateCities() {
 
 function drawCities(city) {
     tempClear();
-    for (var i = 0; i < city.length; i++) {
+    for (let i = 0; i < city.length; i++) {
         fillCell(city[i].x / cellPixelLength, city[i].y / cellPixelLength, "#000000");
     }
     drawAllPath();
 }
 
 function draw(event) {
-    //console.log(cities);
+
     if (event.button !== 0) {
+        return;
+    }
+
+    if (cities.length === 0) {
+        alert("Пожалуйста поставьте точки");
         return;
     }
 
@@ -274,7 +277,7 @@ function draw(event) {
     }
     depth += 1;
 
-    var bestOrder = calculateFitness();
+    let bestOrder = calculateFitness();
     if (lastBestOrder === bestOrder) {
         numberBestPath++;
     } else {
@@ -284,21 +287,22 @@ function draw(event) {
 
     normalizeFitness();
     generateNext();
-    console.log(depth)
+
     drawCities(cities);
     drawBestPath(cities, bestOrder, "purple", 9);
     if (depth > 0 && depth < maxGen && numberBestPath < maxGen / 2) {
-        setTimeout(() => {
+        timeOutID = setTimeout(() => {
             draw(event)
         }, timeCalc(cities.length));
-    } else {
-        console.log(numberBestPath);
+    }
+    else{
+        clearInterval(timeOutID);
     }
 }
 
 function updateCanv() {
-    cellPixelLength = canvas.width / CELL_SIDE_COUNT;
-    canvas.height = cellPixelLength * CELL_SIDE_COUNT;
+    cellPixelLength = canvas.width / cellSideCount;
+    canvas.height = cellPixelLength * cellSideCount;
 
     guideUpdate();
     handleClearButtonClick();

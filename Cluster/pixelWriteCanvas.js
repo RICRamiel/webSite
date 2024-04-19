@@ -11,15 +11,15 @@ const numberOfCluster = document.getElementById("numberOfCluster");
 const clusterNumDemo = document.getElementById("clusterNumDemo");
 const mapSize = document.getElementById("mapSize");
 const mapSizeDemo = document.getElementById("mapSizeDemo");
-var size = parseInt(mapSize.value);
-var numOfClust = parseInt(numberOfCluster.value);
+let size = parseInt(mapSize.value);
+let numOfClust = parseInt(numberOfCluster.value);
 mapSizeDemo.innerHTML = size;
 clusterNumDemo.innerHTML = numOfClust;
 
 //on open canvas
-var CELL_SIDE_COUNT = size;
-var cellPixelLength = canvas.width / CELL_SIDE_COUNT;
-var colorHistory = {};
+let cellSideCount = size;
+let cellPixelLength = canvas.width / cellSideCount;
+let colorHistory = {};
 // Set default color
 // Initialize the canvas background
 drawingContext.fillStyle = "#ffffff";
@@ -32,10 +32,10 @@ function guideUpdate() {
     if (toggleGuide.checked) {
         guide.style.width = `${canvas.width}px`;
         guide.style.height = `${canvas.height}px`;
-        guide.style.gridTemplateColumns = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
-        guide.style.gridTemplateRows = `repeat(${CELL_SIDE_COUNT}, 1fr)`;
-        console.log(canvas.width, canvas.height, CELL_SIDE_COUNT);
-        [...Array(CELL_SIDE_COUNT ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
+        guide.style.gridTemplateColumns = `repeat(${cellSideCount}, 1fr)`;
+        guide.style.gridTemplateRows = `repeat(${cellSideCount}, 1fr)`;
+
+        [...Array(cellSideCount ** 2)].forEach(() => guide.insertAdjacentHTML("beforeend", "<div></div>"));
     }
 }
 
@@ -51,8 +51,8 @@ mapSize.oninput = function () {
     mapSizeDemo.innerHTML = this.value;
     size = parseInt(this.value);
 
-    CELL_SIDE_COUNT = size;
-    cellPixelLength = canvas.width / CELL_SIDE_COUNT;
+    cellSideCount = size;
+    cellPixelLength = canvas.width / cellSideCount;
     colorHistory = {};
     drawingContext.fillStyle = "#ffffff";
     drawingContext.fillRect(0, 0, canvas.width, canvas.height);
@@ -82,7 +82,7 @@ function handleCanvasMousedown(event) {
         // } else if (event.MOUSEOVER) {
 
     } else {
-        //console.log(cellX,cellY);
+        //
         fillCell(cellX, cellY);
     }
 }
@@ -118,21 +118,6 @@ function fillCell(cellX, cellY, color = "#000000") {
     colorHistory[`${cellX}_${cellY}`] = "#000000";
 }
 
-// function mouseMoveDraw(event) {
-//     const canvasBoundingRect = canvas.getBoundingClientRect();
-//     const x = event.clientX - canvasBoundingRect.left - event.offsetX;
-//     const y = event.clientY - canvasBoundingRect.top - event.offsetY;
-//     const cellX = Math.floor(x / cellPixelLength);
-//     const cellY = Math.floor(y / cellPixelLength);
-//     const currentColor = colorHistory[`${cellX}_${cellY}`];
-//     drawingContext.fillStyle = currentColor;
-//     console.log("hover")
-//     if (event.button !== 0) {
-//         console.log("click")
-//         fillCell(cellX, cellY)
-//     }
-// }
-
 function reColorCell(cellX, cellY, color) {
     const startX = cellX * cellPixelLength;
     const startY = cellY * cellPixelLength;
@@ -148,30 +133,33 @@ function requestData() {
     for (let i = 0; i < keys.length; i++) {
         data.push(keys[i].split("_").map(Number));
     }
-    console.log(data);
+
     return data;
 }
 
 
 function colorizeOnCluster() {
-    let classes = KMeans(requestData(), numOfClust);
-    console.log(classes);
     let data = requestData();
+    if (data.length === 0) {
+        alert("Поставьте точки на холсте");
+        return;
+    }
+    let classes = KMeans(data, numOfClust);
+
     let colors = ["#ff0000", "#00ff00", "#0000ff", "#349599", "#a928b5", "#d9eb13", "#d656a1", "#647691", "#600cf2", "#ff8800"];
     for (let i = 0; i < classes.length; i++) {
         reColorCell(data[i][0], data[i][1], colors[classes[i]]);
-        console.log("pix colored")
+
     }
 }
 
 function cluster() {
     colorizeOnCluster()
-    console.log("cluster done");
 }
 
 function updateCanv() {
-    cellPixelLength = canvas.width / CELL_SIDE_COUNT;
-    canvas.height = cellPixelLength * CELL_SIDE_COUNT;
+    cellPixelLength = canvas.width / cellSideCount;
+    canvas.height = cellPixelLength * cellSideCount;
 
     guideUpdate();
     handleClearButtonClick();

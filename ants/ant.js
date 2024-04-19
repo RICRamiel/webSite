@@ -1,14 +1,9 @@
-let pheromone = [];
-// const numAnts = 10;
-// const numIterations = 100;
-// const evaporationRate = 0.1;
-const alpha = 1;
-const beta = 2;
-
 function initializePheromoneMatrix() {
     pheromone = [];
+
     for (let i = 0; i < numCities; i++) {
         pheromone.push([]);
+
         for (let j = 0; j < numCities; j++) {
             pheromone[i][j] = 1;
         }
@@ -22,14 +17,21 @@ function calculateDistance(city1, city2) {
 }
 
 function driver() {
+    tempClear();
+    if (colorHistory.length !== 0) {
+        alert("Поставьте точки на холсте");
+        return;
+    }
     cities = formateCities();
-    let numCities = cities.length;
-    drawCities();
+    drawCities(cities);
+    numCities = cities.length;
     initializePheromoneMatrix();
+    runAntColonyOptimization();
 }
 
 function calculateProbabilities(ant, currentCity) {
     const probabilities = [];
+
     for (let i = 0; i < numCities; i++) {
         if (!ant.visited[i]) {
             const pheromoneLevel = pheromone[currentCity][i];
@@ -38,6 +40,7 @@ function calculateProbabilities(ant, currentCity) {
             probabilities.push({cityIndex: i, probability});
         }
     }
+
     return probabilities;
 }
 
@@ -115,6 +118,7 @@ function runAntColonyOptimization() {
         ants.push({trail: [], visited: new Array(numCities).fill(false)});
     }
 
+
     let bestTrailOverall = null;
 
     for (let iteration = 0; iteration < numIterations; iteration++) {
@@ -140,6 +144,7 @@ function runAntColonyOptimization() {
 
         const bestTrailIteration = findBestTrail(ants.map(ant => ant.trail));
 
+
         if (!bestTrailOverall || bestTrailIteration.distance < bestTrailOverall.distance) {
             bestTrailOverall = bestTrailIteration;
         }
@@ -148,19 +153,20 @@ function runAntColonyOptimization() {
     }
 
     drawBestTrail(bestTrailOverall.trail);
-    console.log(`Best Distance: ${bestTrailOverall.distance}`);
+
 }
 
 function drawBestTrail(trail) {
     drawingContext.beginPath();
-    drawingContext.moveTo(cities[trail[0]].x, cities[trail[0]].y);
+    drawingContext.moveTo(cities[trail[0]].x + cellPixelLength / 2, cities[trail[0]].y + cellPixelLength / 2);
 
     for (let i = 1; i < trail.length; i++) {
         const city = cities[trail[i]];
-        drawingContext.lineTo(city.x, city.y);
+        drawingContext.lineTo(city.x + cellPixelLength / 2, city.y + cellPixelLength / 2);
     }
 
-    drawingContext.lineTo(cities[trail[0]].x, cities[trail[0]].y);
+    drawingContext.lineTo(cities[trail[0]].x + cellPixelLength / 2, cities[trail[0]].y + cellPixelLength / 2);
+    drawingContext.lineWidth = 5;
     drawingContext.strokeStyle = 'purple';
     drawingContext.stroke();
 }

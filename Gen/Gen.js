@@ -1,7 +1,7 @@
 function calculateFitness() {
-    for (var i = 0; i < popSize; i++) {
+    for (let i = 0; i < popSize; i++) {
         population[i] = shuffle(order);
-        var dist = getDistance(cities, population[i]);
+        let dist = getDistance(cities, population[i]);
         fitness[i] = 1 / (dist + 1);
         if (minDistance > dist) {
             minDistance = dist;
@@ -13,19 +13,19 @@ function calculateFitness() {
 
 
 function normalizeFitness() {
-    var sum = 0;
-    for (var i = 0; i < fitness.length; i++) {
+    let sum = 0;
+    for (let i = 0; i < fitness.length; i++) {
         sum += fitness[i];
     }
-    var total = 0;
-    for (var i = 0; i < fitness.length; i++) {
+    let total = 0;
+    for (let i = 0; i < fitness.length; i++) {
         fitness[i] = fitness[i] / sum;
     }
 }
 
 function pickOne(list, prob) {
-    var i = 0;
-    var r = random(1);
+    let i = 0;
+    let r = random(1);
     while (r > 0) {
         r = r - prob[i];
         i++;
@@ -36,10 +36,10 @@ function pickOne(list, prob) {
 
 
 function generateNext() {
-    var newPopulation = [];
-    for (var i = 0; i < population.length; i++) {
-        var orderA = pickOne(population, fitness);
-        var orderB = pickOne(population, fitness);
+    let newPopulation = [];
+    for (let i = 0; i < population.length; i++) {
+        let orderA = pickOne(population, fitness);
+        let orderB = pickOne(population, fitness);
         selectedOrder = crossOver(orderA.slice(), orderB.slice());
         mutate(selectedOrder, mutateProcent);
         newPopulation[i] = population;
@@ -50,10 +50,10 @@ function generateNext() {
 }
 
 function crossOver(orderA, orderB) {
-    var start = floor(random(orderA.length));
-    var end = floor(start + 1, orderA.length);
-    var result = orderA.slice(start, end);
-    for (var i = 0; i < orderB.length; i++) {
+    let start = floor(random(orderA.length));
+    let end = floor(start + 1, orderA.length);
+    let result = orderA.slice(start, end);
+    for (let i = 0; i < orderB.length; i++) {
         if (!result.includes(orderB[i])) {
             result.push(orderB[i]);
         }
@@ -63,10 +63,10 @@ function crossOver(orderA, orderB) {
 
 
 function mutate(a, rate) {
-    for (var i = 0; i < totalCities; i++) {
+    for (let i = 0; i < totalCities; i++) {
         if (random(1) < rate) {
-            var indexA = floor(random(totalCities));
-            var indexB = (indexA + 1) % totalCities
+            let indexA = floor(random(totalCities));
+            let indexB = (indexA + 1) % totalCities
             swapArr(a, indexA, indexB);
         }
     }
