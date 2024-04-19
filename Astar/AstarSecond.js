@@ -1,6 +1,6 @@
 let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
-let canvasSize;
+let canvasSize = 3;
 let matrix;
 let ROW;
 let COL;
@@ -18,14 +18,8 @@ function createCanvas(){
     ctx.fillStyle = '#FFFFFF';
     canvas.innerHTML = "";
     canvasSize = parseInt(document.getElementById('size').value);
-    if (canvasSize % 2 === 0) {
-        alert("The size of the canvas should be odd");
-        return;
-    }
     ROW = canvasSize;
     COL = canvasSize;
-    /*canvas.width = canvasSize * 25;
-    canvas.height = canvasSize * 25;*/
     cageSize = canvas.width/canvasSize;
     ctx.beginPath();
 
@@ -141,7 +135,7 @@ function showCanvas(){
 }
 
 canvas.addEventListener('mousedown', handleClick);
-
+createCanvas();
 function handleClick(event) {
     if (condition)
     {
