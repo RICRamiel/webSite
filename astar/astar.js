@@ -11,11 +11,13 @@ let end = null;
 let findDraw = [];
 let condition=false;
 let cageSize;
+let way = [];
 createCanvas();
+
 function createCanvas(){
-    ctx.fillStyle = '#000000';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#000000';
     canvas.innerHTML = "";
     canvasSize = parseInt(document.getElementById('size').value);
     ROW = canvasSize;
@@ -33,12 +35,14 @@ function createCanvas(){
         ctx.lineTo(canvas.width, i);
     }
     canvas.style.backgroundColor = 'black';
-    ctx.strokeStyle = "#ccc";
+    ctx.strokeStyle = "#000";
     ctx.stroke();
 
     start = null;
     end = null;
     matrix = createMatrix();
+    way = [];
+    findDraw = [];
 }
 
 function createMatrix() {
@@ -63,8 +67,9 @@ function generationLab(){
     let startPos = [0, 0];
     let queue = [];
     let visited = [];
-    matrix = createMatrix();
     way = [];
+    findDraw = [];
+    matrix = createMatrix();
     for (let y = 1; y < canvasSize; y+=2) {
         for (let x = 1; x < canvasSize; x+=2) {
             matrix[x][y-1] = -1;
@@ -120,14 +125,14 @@ function showCanvas(){
     for (let y = 0; y <canvasSize; y++){
         for (let x = 0; x < canvasSize; x++) {
             if (matrix[y][x] === -1){
-                drawCell(y, x, '#FFFFFF');
-                ctx.strokeStyle = "#ccc";
+                drawCell(y, x, '#000000');
+                ctx.strokeStyle = "#000";
                 ctx.stroke();
             }
             else
             {
-                drawCell(y, x, '#000000');
-                ctx.strokeStyle = "#ccc";
+                drawCell(y, x, '#FFFFFF');
+                ctx.strokeStyle = "#000";
                 ctx.stroke();
             }
         }
@@ -154,14 +159,14 @@ function handleClick(event) {
 
     if (start !== null && start.row === row && start.col === col) {
         start = null;
-        drawCell(row, col, '#000000');
-        ctx.strokeStyle = "#ccc";
+        drawCell(row, col, '#FFFFFF');
+        ctx.strokeStyle = "#000";
         ctx.stroke();
     } else {
         if (end !== null && end.row === row && end.col === col) {
             end = null;
-            drawCell(row, col, '#000000');
-            ctx.strokeStyle = "#ccc";
+            drawCell(row, col, '#FFFFFF');
+            ctx.strokeStyle = "#000";
             ctx.stroke();
         } else {
             if (start === null) {
@@ -171,7 +176,7 @@ function handleClick(event) {
                 }
                 start = {row: row, col: col};
                 drawCell(row, col, '#0f0');
-                ctx.strokeStyle = "#ccc";
+                ctx.strokeStyle = "#000";
                 ctx.stroke();
             } else {
                 if (end === null) {
@@ -181,20 +186,20 @@ function handleClick(event) {
                     }
                     end = {row: row, col: col};
                     drawCell(row, col, '#f00');
-                    ctx.strokeStyle = "#ccc";
+                    ctx.strokeStyle = "#000";
                     ctx.stroke();
                 } else{
                     if (matrix[row][col] == -1)
                     {
                         matrix[row][col] = 0;
-                        drawCell(row, col, '#000000');
-                        ctx.strokeStyle = "#ccc";
+                        drawCell(row, col, '#FFFFFF');
+                        ctx.strokeStyle = "#000";
                         ctx.stroke();
                     }
                     else {
                         matrix[row][col] = -1;
-                        drawCell(row, col, '#FFFFFF');
-                        ctx.strokeStyle = "#ccc";
+                        drawCell(row, col, '#000000');
+                        ctx.strokeStyle = "#000";
                         ctx.stroke();
                     }
                 }
@@ -213,7 +218,6 @@ let avalible = [{y : 0, x : 1}, {y : 0, x : -1},
     {y : 1, x : 0}, {y : -1, x : 0}];
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-let way = [];
 async function astar(){
     if(start == null || end == null){
         alert("Выберите стартовую и конечную точки");
@@ -308,10 +312,10 @@ async function ShowPath(){
 
 async function ClearExtra(){
     for(let moves of findDraw){
-        drawCell(moves[0], moves[1], '#000000');
+        drawCell(moves[0], moves[1], '#FFFFFF');
     }
     for (let moves of way){
-        drawCell(moves[0], moves[1], '#000000');
+        drawCell(moves[0], moves[1], '#FFFFFF');
     }
     findDraw = [];
     way = [];
@@ -326,6 +330,7 @@ function clearCanvas(){
         end = null;
         matrix = createMatrix();
         way = [];
+        findDraw = []
         showCanvas();
     }
 }
