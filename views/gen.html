@@ -35,44 +35,49 @@
     </nav>
 </header>
 
-<div style="margin: 20px 5%  0 10%;">
-    <div>
+<div id = 'content'>
+
+    <div id = 'canv'>
         <div id="guide"></div>
         <canvas width="600" height="600" id="canvas"></canvas>
     </div>
-    <div>
-        <label for="mapSize">Set map size:</label>
-        <input type="range" id="mapSize" min="10" max="100" value="25" step="5">
-        <span id="mapSizeDemo"></span>
+
+    <div id="settings">
+        <div>
+            <label for="mapSize">Set map size:</label>
+            <input type="range" id="mapSize" min="10" max="100" value="25" step="5">
+            <span id="mapSizeDemo"></span>
+        </div>
+        <div>
+            <label for="MutateProcent">MutateProcent:</label>
+            <input type="range" id="MutateProcent" min="0" max="100" value="5" step="5">
+            <span id="MutateProcentDemo"></span>
+        </div>
+        <div>
+            <label for="PopulationSize">PopulationSize:</label>
+            <input type="range" id="PopulationSize" min="100" max="1000" value="100" step="10">
+            <span id="PopulationSizeDemo"></span>
+        </div>
+        <div>
+            <label for="maxGeneration">Maximum Generation Size:</label>
+            <input type="range" id="maxGeneration" min="100" max="1000" value="100" step="10">
+            <span id="maxGenerationDemo"></span>
+        </div>
+        <div>
+            <label for="toggleGuide">Show Guide: </label>
+            <input type="checkbox" id="toggleGuide" checked>
+        </div>
+        <div>
+            <button type="button" id="clearButton">Clear</button>
+        </div>
+        <div>
+            <button type="button" id="makePath">Make Path</button>
+        </div>
+        <div>
+            <button type="button" id="startAlgo">Solve Genetic</button>
+        </div>
     </div>
-    <div>
-        <label for="MutateProcent">MutateProcent:</label>
-        <input type="range" id="MutateProcent" min="0" max="100" value="5" step="5">
-        <span id="MutateProcentDemo"></span>
-    </div>
-    <div>
-        <label for="PopulationSize">PopulationSize:</label>
-        <input type="range" id="PopulationSize" min="100" max="1000" value="100" step="10">
-        <span id="PopulationSizeDemo"></span>
-    </div>
-    <div>
-        <label for="maxGeneration">Maximum Generation Size:</label>
-        <input type="range" id="maxGeneration" min="100" max="1000" value="100" step="10">
-        <span id="maxGenerationDemo"></span>
-    </div>
-    <div>
-        <label for="toggleGuide">Show Guide: </label>
-        <input type="checkbox" id="toggleGuide" checked>
-    </div>
-    <div>
-        <button type="button" id="clearButton">Clear</button>
-    </div>
-    <div>
-        <button type="button" id="makePath">Make Path</button>
-    </div>
-    <div>
-        <button type="button" id="startAlgo">Solve Genetic</button>
-    </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/p5@1.4.0/lib/p5.js"></script>
     <script src="../gen/math.js" defer></script>

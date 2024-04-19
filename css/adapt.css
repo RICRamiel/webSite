@@ -10,9 +10,6 @@
 
 }
 
-#content{
-    margin: 20px 10% 0 10%;
-}
 
 *{
     margin: 0;
@@ -76,6 +73,7 @@ ul{
 
 
 #content{
+    margin: 20px 10% 0 10%;
     display: flex;
     flex-wrap: wrap;
     gap:20px;

@@ -32,44 +32,49 @@
         </ul>
     </nav>
 </header>
-<div style="margin: 20px 5%  0 10%;">
-    <div>
+<div id = 'content'>
+    <div id="canv">
         <div id="guide"></div>
         <canvas width="600" height="600" id="canvas"></canvas>
     </div>
-    <div>
-        <label for="mapSize">Set map size:</label>
-        <input type="range" id="mapSize" min="10" max="100" value="25" step="5">
-        <span id="mapSizeDemo"></span>
+
+    <div id = 'settings'>
+        <div>
+            <label for="mapSize">Set map size:</label>
+            <input type="range" id="mapSize" min="10" max="100" value="25" step="5">
+            <span id="mapSizeDemo"></span>
+        </div>
+        <div>
+            <label for="numAnts">Set number of Ants:</label>
+            <input type="range" id="numAnts" min="10" max="100" value="10" step="1">
+            <span id="numAntsDemo"></span>
+        </div>
+        <div>
+            <label for="numIterations">Set number of Iterations:</label>
+            <input type="range" id="numIterations" min="10" max="1000" value="100" step="5">
+            <span id="numIterationsDemo"></span>
+        </div>
+        <div>
+            <label for="evaporationRate">Set evaporation Rate:</label>
+            <input type="range" id="evaporationRate" min="10" max="100" value="10" step="5">
+            <span id="evaporationRateDemo"></span>
+        </div>
+        <div>
+            <label for="toggleGuide">Show Guide: </label>
+            <input type="checkbox" id="toggleGuide" checked>
+        </div>
+        <div>
+            <button type="button" id="clearButton">Clear</button>
+        </div>
+        <div>
+            <button type="button" id="makePath">Make Path</button>
+        </div>
+        <div>
+            <button type="button" id="ant">Start algorithm</button>
+        </div>
     </div>
-    <div>
-        <label for="numAnts">Set number of Ants:</label>
-        <input type="range" id="numAnts" min="10" max="100" value="10" step="1">
-        <span id="numAntsDemo"></span>
-    </div>
-    <div>
-        <label for="numIterations">Set number of Iterations:</label>
-        <input type="range" id="numIterations" min="10" max="1000" value="100" step="5">
-        <span id="numIterationsDemo"></span>
-    </div>
-    <div>
-        <label for="evaporationRate">Set evaporation Rate:</label>
-        <input type="range" id="evaporationRate" min="10" max="100" value="10" step="5">
-        <span id="evaporationRateDemo"></span>
-    </div>
-    <div>
-        <label for="toggleGuide">Show Guide: </label>
-        <input type="checkbox" id="toggleGuide" checked>
-    </div>
-    <div>
-        <button type="button" id="clearButton">Clear</button>
-    </div>
-    <div>
-        <button type="button" id="makePath">Make Path</button>
-    </div>
-    <div>
-        <button type="button" id="ant">Start algorithm</button>
-    </div>
+
+
     <script src="../ants/pixelWriteCanvas.js" defer></script>
     <script src="../ants/canvasResize.js"></script>
     <script src="../ants/ant.js"></script>
