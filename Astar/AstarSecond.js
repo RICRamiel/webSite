@@ -119,7 +119,7 @@ function generationLab(){
 function showCanvas(){
     for (let y = 0; y <canvasSize; y++){
         for (let x = 0; x < canvasSize; x++) {
-            if (matrix[y][x] == -1){
+            if (matrix[y][x] === -1){
                 drawCell(y, x, '#FFFFFF');
                 ctx.strokeStyle = "#ccc";
                 ctx.stroke();
