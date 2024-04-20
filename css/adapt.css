@@ -5,7 +5,7 @@
     --cyan: hsla(176, 96%, 69%, 1);
     --dark-cyan: hsla(177, 40%, 45%, 1);
 
-    --some-shit: #e9e9e9;
+    --w-gray: #e9e9e9;
     --white: #f9f9f9;
 
 }
@@ -18,7 +18,7 @@
 }
 
 body{
-    background-color: var(--some-shit);
+    background-color: var(--w-gray);
     font-family: "apercu", sans-serif;
 }
 
@@ -33,7 +33,7 @@ ul{
 /* Header */
 .header{
     border: 3px solid #ccc;
-    background-color: var(--some-shit);
+    background-color: var(--w-gray);
     /*box-shadow: 1px 1px 5px 0px var(--dark-blue);*/
     border-radius: 15px;
     position: sticky;
@@ -59,7 +59,7 @@ ul{
     position: fixed;
     right: 0px;
 
-    background-color: var(--some-shit);
+    background-color: var(--w-gray);
     overflow: hidden;
 
 }
@@ -158,7 +158,7 @@ ul{
 
 /* Responsiveness */
 
-@media (min-width: 1000px) {
+@media (min-width: 900px) {
     .nav{
         max-height: none;
         top: 0;
